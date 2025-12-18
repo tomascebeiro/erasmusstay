@@ -5,6 +5,8 @@
 ## Instalación/Posta en marcha
 
 > *Tarefa*: **Indica os pasos a seguir para que poidamos probar a vosa aplicación nun contorno de desenvolvemento**. 
+Debes incluír carga de datos inicial automática para poder probar a app.
+É necesario indicar as credenciais dos usuarios necesarios para probar a app.
 
 ## Uso
 
