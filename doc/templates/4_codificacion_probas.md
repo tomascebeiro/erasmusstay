@@ -4,15 +4,15 @@
 
 ## Prototipo 1
 ### Data: 
-### Descrición:
+### Requirimentos a implementar:
 
 ## Prototipo 2
 ### Data: 
-### Descrición:
+### Requirimentos a implementar:
 
 ## Prototipo Final
 ### Data: 
-### Descrición:
+### Requirimentos a implementar:
 
 # Retos e Innovación
 
