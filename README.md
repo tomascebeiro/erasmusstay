@@ -11,7 +11,6 @@ Debes incluír carga de datos inicial automática para poder probar a app.
 ## Uso
 
 > *Tarefa*: **Indica a URL para poder acceder á túa aplicación web e os usuarios para poder probala na avaliación **. 
-Inclúe un breve manual de uso ou un vídeo explicativo, segundo consideres axeitado.
 
 ## Sobre a persoa autora
 
