@@ -1,8 +1,8 @@
 # Deseño
 
-## Casos de uso
-
-## Deseño de interface de usuarios
+## Esquema (boceto ou wireframe).
+ 
+## Identidade visual 
 
 ## Diagrama de Bases de Datos
 
