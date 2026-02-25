@@ -1,6 +1,6 @@
 # Análise: Requirimentos do sistema
 ## Descrición xeral
-## Funcionalidades
+## Requirimentos
 ## Tipos de usuarios
-## Normativa
+
 
