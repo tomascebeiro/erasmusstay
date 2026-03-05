@@ -35,9 +35,16 @@ Empresas e profesionais: propietarios de vivendas e axencias inmobiliarias que o
 Entidades educativas ou intermediarios que colaboran coa mobilidade internacional.
 
 ### Promoción.
+A idea é dar a coñecer a web falando coas universidades e cos coordinadores Erasmus para que a recomenden ós estudantes que veñen a Malta.  
+Tamén se usarán redes sociais e grupos de Facebook/WhatsApp de Erasmus en Malta, explicando que aquí hai máis seguridade e menos estafas que nos anuncios soltos.  
+
+
+
 
 
 ### Modelo de negocio.
+A plataforma gañaría cartos cobrando unha pequena comisión ós propietarios ou axencias cada vez que se pecha unha reserva pola web.  
+Máis adiante poderíanse ofrecer plans de pago con máis vantaxas (máis anuncios, mellor posición na busca, etc), pero ó principio sería algo sinxelo para poder arrancar ben o proxecto.  
 
 ## Requirimentos
 
