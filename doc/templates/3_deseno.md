@@ -6,7 +6,7 @@ A continuación móstranse os wireframes das principais pantallas da aplicación
 
 ### Vista principal (Home)
 
-![Home](img/Home.png)
+![Home](../img/Home.png)
 
 Nesta pantalla principal o usuario pode realizar búsquedas de aloxamento introducindo filtros como localización, prezo ou duración da estancia. Tamén se mostran algúns anuncios destacados.
 
@@ -14,7 +14,7 @@ Nesta pantalla principal o usuario pode realizar búsquedas de aloxamento introd
 
 ### Lista de anuncios
 
-![Lista](img/listaAnuncios.png)
+![Lista](../img/listaAnuncios.png)
 
 Nesta vista móstranse os resultados da búsqueda. O usuario pode aplicar filtros na barra lateral e ver diferentes anuncios dispoñibles con información básica como prezo e localización.
 
@@ -22,7 +22,7 @@ Nesta vista móstranse os resultados da búsqueda. O usuario pode aplicar filtro
 
 ### Detalle de anuncio
 
-![Detalle](img/DetalleyPublicar.png)
+![Detalle](../img/DetalleyPublicar.png)
 
 Nesta pantalla móstrase a información completa dun aloxamento, incluíndo descrición, características e imaxes. Tamén se inclúe o número de teléfono do propietario para poder contactar directamente con el.
 
@@ -30,7 +30,7 @@ Nesta pantalla móstrase a información completa dun aloxamento, incluíndo desc
 
 ### Publicar anuncio
 
-![Publicar](img/DetalleyPublicar.png)
+![Publicar](../img/DetalleyPublicar.png)
 
 Nesta vista os propietarios poden crear novos anuncios introducindo información como título, descrición, prezo, localización, características e imaxes.
 
