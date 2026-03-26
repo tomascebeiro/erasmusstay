@@ -53,7 +53,7 @@ A aplicación deberá permitir as seguintes funcionalidades:
 
 12. Sistema básico de reportes de anuncios ou usuarios sospeitosos.
 
-> O sistema non incluirá mensaxería interna para simplificar o desenvolvemento, polo que o contacto realizarase directamente mediante teléfono entre estudantes e propietarios.
+> O sistema non incluirá mensaxería interna para simplificar o desenvolvemento, polo que o contacto realizarase directamente mediante teléfono entre estudantes e propietarios xa que vía que se me facía moi grande
 
 ---
 
