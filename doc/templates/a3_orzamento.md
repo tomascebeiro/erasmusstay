@@ -1,8 +1,70 @@
 # Planificación
+A planificación do proxecto vaise facer en varias fases, intentando ser o máis realista posibel tendo en conta o tempo que temos na materia e as miñas propias limitacións. Non é un plan perfecto pero serve como guía xeral do traballo.
+
 ## Recursos
+Para levar a cabo o proxecto vou usar principalmente recursos que xa teño dispoñibles, sen facer un gasto excesivo:
+
+- Ordenador portátil persoal cunha potencia media, suficiente para programar e probar a aplicación.
+- Sistema operativo Linux (ou similar) con entorno de desenrolo xa configurado.
+- IDE / editor de código: VS Code, GitLab Web IDE e as ferramentas que xa usamos na aula.
+- Navegadores para probas: Firefox e Chrome para comprobar que a web se ve ben.
+- Conexión a Internet para consultar documentación, repositorio en GitLab e subir cambios.
+- Servizos gratuítos (ou de proba) para probar o despregue se é necesario.
+- Apoio do profesor e dos compañeiros para dúbidas puntuais.
+
+A nivel de recursos humanos, o equipo está formado só por min, así que teño que organizarme ben para non deixar todo para o final.
+
 ## Cronograma
+O tempo dispoñible repártese en varias semanas. A idea é ir facendo entregas pequenas e continuas, en vez de deixar todo para os últimos días (aínda que sei que algún atraso sempre vai haber).
+
+- Semana 1: revisión do estudo preliminar e análise, definición clara dos requerimentos e pechar o deseño básico da aplicación.
+- Semana 2: deseño máis detallado das vistas e da base de datos, preparación do entorno de desenvolvemento e estrutura inicial do proxecto.
+- Semana 3: codificación das partes principais do backend (rutas, modelos, controladores básicos) e primeiras probas manuais.
+- Semana 4: codificación do frontend, integración co backend e axuste de erros máis evidentes.
+- Semana 5: probas máis completas, melloras de usabilidade, revisión da documentación técnica.
+- Semana 6: preparación dos manuais, axustes finais e revisión xeral antes da entrega definitiva.
+
+Este cronograma é orientatibo: pode haber pequenos cambios segundo vaia vendo a carga doutras materias ou se xurde algún problema técnico que leve máis tempo do esperado.
 
 # Orzamento
+
+## 1. Investimentos Iniciais
+| Concepto                      | Importe (€) |
+|------------------------------|-------------|
+| Ordenador portátil (amort.)  | 150,00      |
+| Licenzas software (se houbese)| 0,00       |
+| Periféricos (rato, cascos, etc.) | 20,00  |
+| Conexión a Internet (parte proporcional) | 30,00 |
+| Outros pequenos materiais    | 10,00       |
+| **Total investimentos iniciais** | **210,00** |
+
+## 2. Custos de Man de Obra
+Para calcular a man de obra tomo como referencia un prezo/hora estimado para un estudante/desenvolvedor junior.
+
+- Horas estimadas totais de traballo: 60 horas.
+- Prezo estimado por hora: 10 €/hora.
+
+Cálculo:
+- 60 horas × 10 €/hora = 600,00 €.
+
+## 3. Custos de Operación
+| Concepto                            | Importe (€) |
+|------------------------------------|-------------|
+| Electricidade (consumo estimado)   | 15,00       |
+| Desprazamentos puntuais (se os hai)| 10,00       |
+| Servizos na nube (se se usan, versión gratuita) | 0,00 |
+| **Total custos de operación**      | **25,00**   |
+
+## 4. Orzamento Total Estimado
+Sumando os diferentes apartados:
+
+- Investimentos iniciais: 210,00 €
+- Man de obra: 600,00 €
+- Custos de operación: 25,00 €
+
+**Total orzamento estimado do proxecto: 835,00 €**
+
+Este orzamento non é exacto ao céntimo, pero serve para ter unha idea razonabel do custo que tería o proxecto se se valorase o tempo de traballo e os recursos usados.
 
 ## 1. Investimentos Iniciais
 
