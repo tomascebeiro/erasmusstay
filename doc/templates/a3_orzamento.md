@@ -52,7 +52,7 @@ Este cronograma é orientativo: pode haber pequeños cambios segundo vaia vendo 
 | Concepto | Importe (€) | Observacións |
 |---|---|---|
 | Mercadorías | 0,00 | Non aplica |
-| Soldo autónomo 20€ x 80 horas | 1.600,00 | Estimo que vou adica rlle uns 80 horas ao proxecto, valoradas a 20€/hora |
+| Soldo autónomo 20€ x 80 horas | 1.600,00 | Estimo que vou adicarlle uns 80 horas ao proxecto, valoradas a 20€/hora |
 | S.S. Autónomo | 0,00 | Non considero a cota de S.S. porque se trata dun proxecto académico sen alta real como autónomo |
 | Publicidade | 30,00 | Publicacións nas redes sociais para dar a coñecer a plataforma |
 | Auga | 0,00 | Non incluo porque o consumo é insignificante |
@@ -90,10 +90,10 @@ O proxecto finánciase íntegramente con recursos propios: o ordenador persoal (
 |---|---|---|
 | Nóminas | 0,00 | Traballo solo |
 | Seguridade Social empresa | 0,00 | Non aplica |
-| Soldo autónomo (20€/h x 1.000h) | 20.000,00 | Estimación de dedicación anual |
-| S.S. Autónomo (80€ x 12 meses) | 960,00 | Tarifa plana de autónomo |
-| Publicidade | 500,00 | Redes sociais e marketing dixital |
-| Auga | 0,00 | Non aplica, traballo dende casa familiar |
+| Soldo autónomo (20€/h x 250h) | 5.000,00 | Estimación realista de mantemento: ~5h/semana x 50 semanas |
+| S.S. Autónomo | 0,00 | Sen alta real como autónomo nesta fase |
+| Publicidade | 200,00 | Redes sociais e marketing básico |
+| Auga | 160,00 | Estimación orientativa anual |
 | Luz (20€ x 12 meses) | 240,00 | Parte proporcional do consumo |
 | Xestoría | 0,00 | Xestínase persoalmente |
 | Aluguer | 0,00 | Traballo dende casa familiar, sen custo |
@@ -101,7 +101,7 @@ O proxecto finánciase íntegramente con recursos propios: o ordenador persoal (
 | Material oficina | 50,00 | Gastos menores |
 | Amortizacións (500€ / 4 anos) | 125,00 | Perda de valor anual do ordenador |
 | Préstamo (intereses) | 0,00 | Non aplica |
-| **TOTAL GASTOS 1º ANO** | **22.055,00** | |
+| **TOTAL GASTOS 1º ANO** | **5.955,00** | |
 
 **Prezo por hora:** 20,00 €/h  
 **Horas totais de desenvolvemento:** 80 h  
