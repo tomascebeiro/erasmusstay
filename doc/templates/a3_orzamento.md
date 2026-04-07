@@ -1,155 +1,109 @@
 # Planificación
+
 A planificación do proxecto vaise facer en varias fases, intentando ser o máis realista posibel tendo en conta o tempo que temos na materia e as miñas propias limitacións. Non é un plan perfecto pero serve como guía xeral do traballo.
 
 ## Recursos
+
 Para levar a cabo o proxecto vou usar principalmente recursos que xa teño dispoñibles, sen facer un gasto excesivo:
 
-- Ordenador portátil persoal cunha potencia media, suficiente para programar e probar a aplicación.
-- Sistema operativo Linux (ou similar) con entorno de desenrolo xa configurado.
-- IDE / editor de código: VS Code, GitLab Web IDE e as ferramentas que xa usamos na aula.
+- Ordenador portátil persoal cunha potencia media, suficiente para programar e probar a apliación.
+- Sistema operativo Linux con entorno de desenrolo xa configurado.
+- IDE / editor de código: VS Code e as ferramentas que xa usamos na aula.
 - Navegadores para probas: Firefox e Chrome para comprobar que a web se ve ben.
 - Conexión a Internet para consultar documentación, repositorio en GitLab e subir cambios.
-- Servizos gratuítos (ou de proba) para probar o despregue se é necesario.
+- Servizos gratúítos para probar o despregue se é necesario (Railway, Render...)
 - Apoio do profesor e dos compañeiros para dúbidas puntuais.
 
 A nivel de recursos humanos, o equipo está formado só por min, así que teño que organizarme ben para non deixar todo para o final.
 
 ## Cronograma
-O tempo dispoñible repártese en varias semanas. A idea é ir facendo entregas pequenas e continuas, en vez de deixar todo para os últimos días (aínda que sei que algún atraso sempre vai haber).
 
-- Semana 1: revisión do estudo preliminar e análise, definición clara dos requerimentos e pechar o deseño básico da aplicación.
-- Semana 2: deseño máis detallado das vistas e da base de datos, preparación do entorno de desenvolvemento e estrutura inicial do proxecto.
-- Semana 3: codificación das partes principais do backend (rutas, modelos, controladores básicos) e primeiras probas manuais.
-- Semana 4: codificación do frontend, integración co backend e axuste de erros máis evidentes.
-- Semana 5: probas máis completas, melloras de usabilidade, revisión da documentación técnica.
-- Semana 6: preparación dos manuais, axustes finais e revisión xeral antes da entrega definitiva.
+O tempo dispoñible repártese en varias semanas. A idea é ir facendo entregas pequeñas e continuas, en vez de deixar todo para os últimos días (aínda que sei que algun atraso sempre vai haber).
 
-Este cronograma é orientatibo: pode haber pequenos cambios segundo vaia vendo a carga doutras materias ou se xurde algún problema técnico que leve máis tempo do esperado.
+| Fase | Descripción | Data inicio | Data remate | Horas |
+|---|---|---|---|---|
+| Estudo Preliminar | Analise de requisitos e descripción do proxecto | 08/04/2026 | 17/04/2026 | 10 |
+| Analise | Casos de uso, modelo de datos e estrutura da BD | 20/04/2026 | 30/04/2026 | 12 |
+| Deseño | Deseño da interface, wireframes e estructura frontend/backend | 04/05/2026 | 15/05/2026 | 15 |
+| Codificación e Probas | Desenvolvemento frontend Vue, backend Django e Docker | 18/05/2026 | 26/06/2026 | 33 |
+| Manuais e Documentación | Redacción da memoria, manual de usuario e manual tecnico | 29/06/2026 | 10/07/2026 | 10 |
+| **TOTAL** | | | | **80** |
+
+Este cronograma é orientativo: pode haber pequeños cambios segundo vaia vendo a carga doutras materias ou se xurde algún problema técnico que leve máis tempo do esperado.
 
 # Orzamento
 
 ## 1. Investimentos Iniciais
-| Concepto                      | Importe (€) |
-|------------------------------|-------------|
-| Ordenador portátil (amort.)  | 150,00      |
-| Licenzas software (se houbese)| 0,00       |
-| Periféricos (rato, cascos, etc.) | 20,00  |
-| Conexión a Internet (parte proporcional) | 30,00 |
-| Outros pequenos materiais    | 10,00       |
-| **Total investimentos iniciais** | **210,00** |
 
-## 2. Custos de Man de Obra
-Para calcular a man de obra tomo como referencia un prezo/hora estimado para un estudante/desenvolvedor junior.
+| Concepto | Importe (€) | Observacións |
+|---|---|---|
+| Instalacións | 0,00 | Non aplica |
+| Mobiliario | 0,00 | Non aplica |
+| Maquinaria | 0,00 | Non aplica |
+| Ferramentas e útiles | 0,00 | Non aplica |
+| Elementos de transporte | 0,00 | Non aplica |
+| Equipos informáticos | 500,00 | Conto cun ordenador cun valor estimado de 500€ no mercado actual, que utilizo para o proxecto |
+| Programas informáticos | 0,00 | Uso software libre e de balde |
+| Patentes e marcas | 0,00 | Non aplica |
+| **TOTAL INVESTIMENTOS** | **500,00** | |
 
-- Horas estimadas totais de traballo: 60 horas.
-- Prezo estimado por hora: 10 €/hora.
+## 2. Gastos ao Longo do Desenvolvemento (3 meses)
 
-Cálculo:
-- 60 horas × 10 €/hora = 600,00 €.
+| Concepto | Importe (€) | Observacións |
+|---|---|---|
+| Mercadorías | 0,00 | Non aplica |
+| Soldo autónomo 20€ x 80 horas | 1.600,00 | Estimo que vou adica rlle uns 80 horas ao proxecto, valoradas a 20€/hora |
+| S.S. Autónomo | 0,00 | Non considero a cota de S.S. porque se trata dun proxecto académico sen alta real como autónomo |
+| Publicidade | 30,00 | Publicacións nas redes sociais para dar a coñecer a plataforma |
+| Auga | 0,00 | Non incluo porque o consumo é insignificante |
+| Luz (20€ x 3 meses) | 60,00 | Cantidade orientativa baseada nun consumo medio |
+| Xestoría | 0,00 | Non aplica |
+| Aluguer | 0,00 | Non incluo aluguer porque resido coa miña familia e non teño custo adicional de local |
+| Conexións (internet) | 45,00 | 15€/mes x 3 meses, parte proporcional do ADSL de casa |
+| Material oficina | 10,00 | Boliígrafos, follas, pequeños gastos |
+| Préstamo (intereses) | 0,00 | Non aplica |
+| Gastos Constitución | 0,00 | Non aplica |
+| **TOTAL GASTOS** | **1.745,00** | |
 
-## 3. Custos de Operación
-| Concepto                            | Importe (€) |
-|------------------------------------|-------------|
-| Electricidade (consumo estimado)   | 15,00       |
-| Desprazamentos puntuais (se os hai)| 10,00       |
-| Servizos na nube (se se usan, versión gratuita) | 0,00 |
-| **Total custos de operación**      | **25,00**   |
-
-## 4. Orzamento Total Estimado
-Sumando os diferentes apartados:
-
-- Investimentos iniciais: 210,00 €
-- Man de obra: 600,00 €
-- Custos de operación: 25,00 €
-
-**Total orzamento estimado do proxecto: 835,00 €**
-
-Este orzamento non é exacto ao céntimo, pero serve para ter unha idea razonabel do custo que tería o proxecto se se valorase o tempo de traballo e os recursos usados.
-
-## 1. Investimentos Iniciais
+## 3. Total Xeral
 
 | Concepto | Importe (€) |
 |---|---|
-| Instalacións (Acondicionamento) | 0,00 |
-| Mobiliario | 0,00 |
-| Maquinaria | 0,00 |
-| Ferramentas e útiles | 0,00 |
-| Elementos de transporte | 0,00 |
-| Equipos informáticos (ordenador) | 750,00 |
-| Programas informáticos | 0,00 |
-| Patentes e marcas | 0,00 |
-| **TOTAL INVESTIMENTOS** | **750,00** |
-
-> O promotor dispón dun ordenador persoal adquirido anteriormente valorado en 750,00 € (valor de mercado actual). Non se require ningún outro investimento inicial xa que se trata dun proxecto de software.
-
-## 2. Gastos ao Longo do Desenvolvemento do Proxecto (3 meses)
-
-| Concepto | Importe (€) |
-|---|---|
-| Mercadorías | 0,00 |
-| Soldo autónomo 20 €/h x 425 horas | 8.500,00 |
-| S.S. Autónomo (tarifa plana 80 € x 3 meses) | 240,00 |
-| Publicidade (redes sociais, anuncios) | 100,00 |
-| Auga (3 meses) | 40,00 |
-| Luz (20 € x 3 meses) | 60,00 |
-| Xestoría | 0,00 |
-| Alugueiros (300 € x 3 meses) | 900,00 |
-| Conexións (teléfono, internet) | 50,00 |
-| Material oficina | 10,00 |
-| Préstamo (intereses) | 0,00 |
-| Gastos Constitución | 0,00 |
-| **TOTAL GASTOS DESENVOLVEMENTO** | **9.900,00** |
-
-## 3. Total Investimentos Iniciais e Gastos
-
-| Concepto | Importe (€) |
-|---|---|
-| Total Investimentos Iniciais | 750,00 |
-| Total Gastos Desenvolvemento | 9.900,00 |
-| **TOTAL XERAL** | **10.650,00** |
+| Total Investimentos Iniciais | 500,00 |
+| Total Gastos Desenvolvemento | 1.745,00 |
+| **TOTAL NECESARIO** | **2.245,00** |
 
 ## 4. Financiamento
 
 | Concepto | Importe (€) |
 |---|---|
-| Achegas propias | 10.650,00 |
+| Achegas propias | 2.245,00 |
 | Préstamos bancarios | 0,00 |
-| Outras vías de financiamento | 0,00 |
-| **TOTAL FINANCIAMENTO** | **10.650,00** |
+| Outras vías | 0,00 |
+| **TOTAL FINANCIAMENTO** | **2.245,00** |
 
-> O proxecto finánciase íntegramente con recursos propios do promotor: o ordenador persoal (750,00 €) e os aforros persoais para cubrir os gastos dos 3 meses de desenvolvemento (9.900,00 €).
+O proxecto finánciase íntegramente con recursos propios: o ordenador persoal (500,00€) e aforros para cubrir os gastos dos 3 meses de desenvolvemento (1.745,00€).
 
-## 5. Gastos Iniciais no Caso de Explotación do Proxecto (1º Ano)
+## 5. Gastos Estimados no Caso de Explotación (1º Ano)
 
-| Concepto | Importe (€) |
-|---|---|
-| Mercadorías | 0,00 |
-| Nóminas | 0,00 |
-| Seguridade Social: participación empresa | 0,00 |
-| Soldo autónomo (20 €/h x 1.000 h/ano) | 20.000,00 |
-| S.S. Autónomo (80 € x 12 meses) | 960,00 |
-| Publicidade | 500,00 |
-| Auga (anual) | 160,00 |
-| Luz (20 € x 12 meses) | 240,00 |
-| Xestoría | 0,00 |
-| Alugueiros (300 € x 12 meses) | 3.600,00 |
-| Conexións (teléfono, internet) | 200,00 |
-| Material oficina | 50,00 |
-| Amortizacións (ordenador 750 € / 4 anos) | 188,00 |
-| Préstamo (intereses) | 0,00 |
-| Gastos Constitución | 0,00 |
-| **TOTAL GASTOS 1º ANO EXPLOTACIÓN** | **25.898,00** |
+| Concepto | Importe (€) | Observacións |
+|---|---|---|
+| Nóminas | 0,00 | Traballo solo |
+| Seguridade Social empresa | 0,00 | Non aplica |
+| Soldo autónomo (20€/h x 1.000h) | 20.000,00 | Estimación de dedicación anual |
+| S.S. Autónomo (80€ x 12 meses) | 960,00 | Tarifa plana de autónomo |
+| Publicidade | 500,00 | Redes sociais e marketing dixital |
+| Auga | 0,00 | Non aplica, traballo dende casa familiar |
+| Luz (20€ x 12 meses) | 240,00 | Parte proporcional do consumo |
+| Xestoría | 0,00 | Xestínase persoalmente |
+| Aluguer | 0,00 | Traballo dende casa familiar, sen custo |
+| Conexións (internet) | 180,00 | 15€/mes x 12 meses |
+| Material oficina | 50,00 | Gastos menores |
+| Amortizacións (500€ / 4 anos) | 125,00 | Perda de valor anual do ordenador |
+| Préstamo (intereses) | 0,00 | Non aplica |
+| **TOTAL GASTOS 1º ANO** | **22.055,00** | |
 
-## 6. Resumo Xeral
-
-| Concepto | Importe (€) |
-|---|---|
-| Total Investimentos Iniciais | 750,00 |
-| Total Gastos Desenvolvemento (3 meses) | 9.900,00 |
-| **TOTAL NECESARIO PARA O PROXECTO** | **10.650,00** |
-| Total Gastos Explotación 1º Ano | 25.898,00 |
-
-**Prezo por hora do promotor:** 20,00 €/h  
-**Horas totais de desenvolvemento:** 425 h  
-**Duración estimada do desenvolvemento:** 3 meses  
-**Modalidade de financiamento:** Achegas propias (100%)
+**Prezo por hora:** 20,00 €/h  
+**Horas totais de desenvolvemento:** 80 h  
+**Duración estimada:** 3 meses  
+**Financiamento:** Achegas propias (100%)
