@@ -27,7 +27,8 @@ O tempo dispoñible repártese en varias semanas. A idea é ir facendo entregas 
 | Deseño | Deseño da interface, wireframes e estructura frontend/backend | 04/05/2026 | 15/05/2026 | 15 |
 | Codificación e Probas | Desenvolvemento frontend Vue, backend Django e Docker | 18/05/2026 | 26/06/2026 | 33 |
 | Manuais e Documentación | Redacción da memoria, manual de usuario e manual tecnico | 29/06/2026 | 10/07/2026 | 10 |
-| **TOTAL** | | | | **80** |
+| Difusión e Promoción | Publicación en redes sociais, contacto con universidades e coordinadores Erasmus | 13/07/2026 | 17/07/2026 | 3 |
+| **TOTAL** | | | | **83** |
 
 Este cronograma é orientativo: pode haber pequeños cambios segundo vaia vendo a carga doutras materias ou se xurde algún problema técnico que leve máis tempo do esperado.
 
@@ -54,33 +55,34 @@ Este cronograma é orientativo: pode haber pequeños cambios segundo vaia vendo 
 | Mercadorías | 0,00 | Non aplica |
 | Soldo autónomo 20€ x 80 horas | 1.600,00 | Estimo que vou adicarlle uns 80 horas ao proxecto, valoradas a 20€/hora |
 | S.S. Autónomo | 0,00 | Non considero a cota de S.S. porque se trata dun proxecto académico sen alta real como autónomo |
-| Publicidade | 30,00 | Publicacións nas redes sociais para dar a coñecer a plataforma |
+| Publicidade | 90,00 | Anuncios en Instagram/Facebook e posibles carteis para universidades |
 | Auga | 0,00 | Non incluo porque o consumo é insignificante |
 | Luz (20€ x 3 meses) | 60,00 | Cantidade orientativa baseada nun consumo medio |
 | Xestoría | 0,00 | Non aplica |
 | Aluguer | 0,00 | Non incluo aluguer porque resido coa miña familia e non teño custo adicional de local |
 | Conexións (internet) | 45,00 | 15€/mes x 3 meses, parte proporcional do ADSL de casa |
-| Material oficina | 10,00 | Boliígrafos, follas, pequeños gastos |
+| Material oficina | 10,00 | Bolígrafos, follas, pequeños gastos |
+| Dominio web (.com) | 12,00 | Rexistro do dominio por 1 ano |
 | Préstamo (intereses) | 0,00 | Non aplica |
 | Gastos Constitución | 0,00 | Non aplica |
-| **TOTAL GASTOS** | **1.745,00** | |
+| **TOTAL GASTOS** | **1.817,00** | |
 
 ## 3. Total Xeral
 
 | Concepto | Importe (€) |
 |---|---|
 | Total Investimentos Iniciais | 500,00 |
-| Total Gastos Desenvolvemento | 1.745,00 |
-| **TOTAL NECESARIO** | **2.245,00** |
+| Total Gastos Desenvolvemento | 1.817,00 |
+| **TOTAL NECESARIO** | **2.317,00** |
 
 ## 4. Financiamento
 
 | Concepto | Importe (€) |
 |---|---|
-| Achegas propias | 2.245,00 |
+| Achegas propias | 2.317,00 |
 | Préstamos bancarios | 0,00 |
 | Outras vías | 0,00 |
-| **TOTAL FINANCIAMENTO** | **2.245,00** |
+| **TOTAL FINANCIAMENTO** | **2.317,00** |
 
 O proxecto finánciase íntegramente con recursos propios: o ordenador persoal (500,00€) e aforros para cubrir os gastos dos 3 meses de desenvolvemento (1.745,00€).
 
@@ -92,7 +94,7 @@ O proxecto finánciase íntegramente con recursos propios: o ordenador persoal (
 | Seguridade Social empresa | 0,00 | Non aplica |
 | Soldo autónomo (20€/h x 250h) | 5.000,00 | Estimación realista de mantemento: ~5h/semana x 50 semanas |
 | S.S. Autónomo | 0,00 | Sen alta real como autónomo nesta fase |
-| Publicidade | 200,00 | Redes sociais e marketing básico |
+| Publicidade | 300,00 | Anuncios en Instagram/Facebook, contacto con universidades e marketing |
 | Auga | 160,00 | Estimación orientativa anual |
 | Luz (20€ x 12 meses) | 240,00 | Parte proporcional do consumo |
 | Xestoría | 0,00 | Xestínase persoalmente |
@@ -101,9 +103,10 @@ O proxecto finánciase íntegramente con recursos propios: o ordenador persoal (
 | Material oficina | 50,00 | Gastos menores |
 | Amortizacións (500€ / 4 anos) | 125,00 | Perda de valor anual do ordenador |
 | Préstamo (intereses) | 0,00 | Non aplica |
-| **TOTAL GASTOS 1º ANO** | **5.955,00** | |
+| Dominio web (.com) | 12,00 | Renovación anual do dominio |
+| **TOTAL GASTOS 1º ANO** | **6.067,00** | |
 
 **Prezo por hora:** 20,00 €/h  
-**Horas totais de desenvolvemento:** 80 h  
+**Horas totais de desenvolvemento:** 83 h
 **Duración estimada:** 3 meses  
 **Financiamento:** Achegas propias (100%)
