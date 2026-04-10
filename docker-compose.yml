@@ -30,6 +30,7 @@ services:
       context: ./frontend
     container_name: erasmusstay_frontend
     restart: always
+    working_dir: /app
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -37,6 +38,6 @@ services:
       - "5173:5173"
     depends_on:
       - backend
-
+      
 volumes:
   postgres_data:
