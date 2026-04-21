@@ -1,6 +1,0 @@
-# Planificación
-## Recursos
-## Cronograma
-
-# Orzamento
-
