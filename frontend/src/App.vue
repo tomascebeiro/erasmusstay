@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import Navigation from './components/Navigation.vue'
 
 const anuncios = ref([])
 const cargando = ref(true)
@@ -25,6 +26,7 @@ onMounted(() => {
 </script>
 
 <template>
+  <Navigation />
   <main>
     <h1>ErasmusStay</h1>
     <p>Listado de anuncios desde Django REST Framework</p>
