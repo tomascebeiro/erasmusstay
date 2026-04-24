@@ -3,8 +3,8 @@
 # Deseño dos prototipos 
 
 ## Prototipo 1
-### Data de entrega: 
-### Funcionalidades implementadas:
+### Data de entrega: 14/04/2026
+### Funcionalidades implementadas: Implementación de listado de anuncios, implementación de detalle anuncios.
 ### Observacións: 
 ### Innovación: 
 
