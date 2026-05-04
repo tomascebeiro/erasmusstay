@@ -2,8 +2,8 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm install --no-audit
 COPY . .
+RUN npm install
 RUN npm run build
 
 # Fase 2: servidor Nginx
