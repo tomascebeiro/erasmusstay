@@ -34,8 +34,8 @@ const error = ref(null)
 
 onMounted(async () => {
   try {
-    const res = await fetch('http://localhost:8000/api/anuncios/')
-    anuncios.value = (await res.json()).results || []
+        const res = await fetch('https://erasmusstay-production.up.railway.app/api/anuncios/')    
+                anuncios.value = (await res.json()).results || []
   } catch (e) {
     error.value = e.message
   } finally {
