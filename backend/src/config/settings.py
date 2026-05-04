@@ -27,6 +27,7 @@ SECRET_KEY = 'django-insecure-a-3o0h0@n767hn5!uzg6&c10jz7cj9@au%x7x_ug@-%uo)d=l3
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://erasmusstay-production.up.railway.app']
 
 # Application definition
 
