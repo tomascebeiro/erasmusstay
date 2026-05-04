@@ -1,9 +1,9 @@
 # Fase 1: build
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY package.json package-lock.json* ./
-COPY . .
+COPY package.json ./
 RUN npm install
+COPY . .
 RUN npm run build
 
 # Fase 2: servidor Nginx
