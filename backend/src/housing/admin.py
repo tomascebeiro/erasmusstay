@@ -54,7 +54,7 @@ class ImagenAnuncioAdmin(admin.ModelAdmin):
 
 @admin.register(Valoracion)
 class ValoracionAdmin(admin.ModelAdmin):
-    list_display = ('anuncio', 'autor', 'puntuacion', 'fecha')
+    list_display = ('anuncio', 'usuario', 'puntuacion')
     list_filter = ('puntuacion',)
 
 
