@@ -56,7 +56,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-const apiUrl = import.meta.env.VITE_API_URL || ''
+const apiUrl = 'https://erasmusstay-production.up.railway.app'
 
 const usuario = ref(localStorage.getItem('usuario') || '')
 const rol = ref(localStorage.getItem('rol') || '')
@@ -146,134 +146,29 @@ function cerrarSesion() {
   top: 0;
   z-index: 100;
 }
-
-.cabecera-marca {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.cabecera-logo-texto {
-  display: flex;
-  flex-direction: column;
-}
-
-.cabecera-titulo {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #e94560;
-  letter-spacing: 0.03em;
-}
-
-.cabecera-subtitulo {
-  font-size: 0.7rem;
-  color: #aaa;
-  letter-spacing: 0.02em;
-}
-
-.cabecera-nav {
-  display: flex;
-  gap: 1.2rem;
-  flex: 1;
-}
-
-.cabecera-nav a {
-  color: #ccc;
-  text-decoration: none;
-  font-size: 0.88rem;
-  transition: color 0.2s;
-}
-
-.cabecera-nav a:hover {
-  color: #e94560;
-}
-
-.cabecera-sesion {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-}
-
-.usuario-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.usuario-nombre {
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.etiqueta-rol {
-  font-size: 0.7rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 20px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: #444;
-}
-
+.cabecera-marca { display: flex; align-items: center; gap: 0.8rem; }
+.cabecera-logo-texto { display: flex; flex-direction: column; }
+.cabecera-titulo { font-size: 1.2rem; font-weight: 700; color: #e94560; letter-spacing: 0.03em; }
+.cabecera-subtitulo { font-size: 0.7rem; color: #aaa; }
+.cabecera-nav { display: flex; gap: 1.2rem; flex: 1; }
+.cabecera-nav a { color: #ccc; text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+.cabecera-nav a:hover { color: #e94560; }
+.cabecera-sesion { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+.usuario-info { display: flex; align-items: center; gap: 0.5rem; }
+.usuario-nombre { font-size: 0.9rem; font-weight: 500; }
+.etiqueta-rol { font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: #444; }
 .etiqueta-rol--administrador { background: #e94560; color: white; }
 .etiqueta-rol--propietario { background: #f5a623; color: #1a1a2e; }
 .etiqueta-rol--estudiante { background: #27ae60; color: white; }
-
-.pestanas-auth {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.pestana {
-  padding: 0.3rem 0.8rem;
-  border: 1px solid #555;
-  background: transparent;
-  color: #aaa;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.82rem;
-  transition: all 0.2s;
-}
-
-.pestana--activa,
-.pestana:hover {
-  background: #e94560;
-  border-color: #e94560;
-  color: white;
-}
-
-.formulario-auth {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  align-items: center;
-}
-
-.formulario-auth input,
-.formulario-auth select {
-  padding: 0.4rem 0.6rem;
-  border-radius: 5px;
-  border: none;
-  font-size: 0.82rem;
-  min-width: 110px;
-  flex: 1;
-}
-
-.boton {
-  padding: 0.4rem 0.9rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.82rem;
-  font-weight: 600;
-  transition: opacity 0.2s;
-}
-
+.pestanas-auth { display: flex; gap: 0.4rem; }
+.pestana { padding: 0.3rem 0.8rem; border: 1px solid #555; background: transparent; color: #aaa; border-radius: 4px; cursor: pointer; font-size: 0.82rem; transition: all 0.2s; }
+.pestana--activa, .pestana:hover { background: #e94560; border-color: #e94560; color: white; }
+.formulario-auth { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
+.formulario-auth input, .formulario-auth select { padding: 0.4rem 0.6rem; border-radius: 5px; border: none; font-size: 0.82rem; min-width: 110px; flex: 1; }
+.boton { padding: 0.4rem 0.9rem; border: none; border-radius: 5px; cursor: pointer; font-size: 0.82rem; font-weight: 600; transition: opacity 0.2s; }
 .boton:hover { opacity: 0.85; }
 .boton--primario { background: #e94560; color: white; }
 .boton--salir { background: #333; color: #ccc; }
-
 .mensaje-error { color: #ff6b6b; font-size: 0.8rem; width: 100%; }
 .mensaje-exito { color: #2ecc71; font-size: 0.8rem; width: 100%; }
 </style>
