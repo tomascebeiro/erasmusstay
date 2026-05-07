@@ -1,8 +1,8 @@
 <template>
   <div id="aplicacion">
-    <Navegacion />
+    <Navegacion @login="alEntrar" @logout="alSalir" />
     <main class="contenido-principal">
-      <ListadoAnuncios />
+      <ListadoAnuncios :usuario="usuarioActual" />
     </main>
     <footer class="pie-pagina">
       <p>&copy; 2025 ErasmusStay &mdash; Encuentra tu piso en Malta</p>
@@ -11,8 +11,19 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import Navegacion from './components/Navigation.vue'
 import ListadoAnuncios from './components/ListadoAnuncios.vue'
+
+const usuarioActual = ref(null)
+
+function alEntrar(datos) {
+  usuarioActual.value = datos
+}
+
+function alSalir() {
+  usuarioActual.value = null
+}
 </script>
 
 <style>
