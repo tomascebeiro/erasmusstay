@@ -34,32 +34,26 @@
     <div v-if="cargando" class="estado">Cargando pisos...</div>
     <div v-else-if="error" class="estado aviso-error">{{ error }}</div>
 
-    <div v-else>
-      <p class="conteo">{{ anuncios.length }} pisos disponibles en Malta</p>
-      <div class="cuadricula">
-        <div v-for="anuncio in anuncios" :key="anuncio.id" class="tarjeta">
-          <div class="tarjeta-tipo">{{ tipoTexto(anuncio.tipo_vivienda) }}</div>
-          <div class="tarjeta-cuerpo">
-            <h3>{{ anuncio.titulo }}</h3>
-            <p class="ubicacion">{{ anuncio.localizacion }}</p>
-            <p class="descripcion">{{ anuncio.descripcion.substring(0, 90) }}...</p>
-            <div class="extras">
-              <span v-if="anuncio.wifi">Wifi</span>
-              <span v-if="anuncio.terraza">Terraza</span>
-              <span v-if="anuncio.garaje">Garaje</span>
-            </div>
-          </div>
-          <div class="tarjeta-pie">
-            <span class="precio">{{ anuncio.precio_mes }} euro/mes</span>
-            <div class="acciones">
-              <button class="btn-contactar">Contactar</button>
-              <button
-                v-if="puedeEliminar(anuncio)"
-                @click="eliminarAnuncio(anuncio.id)"
-                class="btn-borrar"
-              >Eliminar</button>
-            </div>
-          </div>
+    <div v-else class="lista-pisos">
+      <div v-for="anuncio in anuncios" :key="anuncio.id" class="tarjeta">
+        <div class="tarjeta-cabecera">
+          <h2 class="tarjeta-titulo">{{ anuncio.titulo }}</h2>
+          <span class="tarjeta-precio">{{ anuncio.precio_mes }}€/mes</span>
+        </div>
+        <p class="tarjeta-lugar">{{ anuncio.localizacion }}</p>
+        <p class="tarjeta-desc">{{ anuncio.descripcion }}</p>
+        <div class="tarjeta-extras">
+          <span v-if="anuncio.wifi" class="extra">Wifi</span>
+          <span v-if="anuncio.terraza" class="extra">Terraza</span>
+          <span v-if="anuncio.garaje" class="extra">Garaje</span>
+          <span class="extra tipo">{{ anuncio.tipo_vivienda }}</span>
+        </div>
+        <div class="tarjeta-contacto">
+          <span v-if="anuncio.telefono_contacto">Tel: {{ anuncio.telefono_contacto }}</span>
+          <span v-if="anuncio.email_contacto">Email: {{ anuncio.email_contacto }}</span>
+        </div>
+        <div class="tarjeta-acciones" v-if="puedeEliminar(anuncio)">
+          <button @click="eliminarAnuncio(anuncio.id)" class="btn-borrar">Eliminar</button>
         </div>
       </div>
     </div>
@@ -70,7 +64,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 
-const apiUrl = import.meta.env.VITE_API_URL || ''
+const props = defineProps({
+  usuario: Object
+})
+
+const URL_BACKEND = 'https://erasmusstay-production.up.railway.app'
+
 const anuncios = ref([])
 const cargando = ref(true)
 const error = ref('')
@@ -78,36 +77,33 @@ const mostrarFormulario = ref(false)
 const errorCrear = ref('')
 
 const nuevoAnuncio = ref({
-  titulo: '', localizacion: '', descripcion: '',
-  precio_mes: '', tipo_vivienda: 'habitacion',
-  wifi: false, terraza: false, garaje: false,
-  telefono_contacto: '', email_contacto: ''
+  titulo: '',
+  localizacion: '',
+  descripcion: '',
+  precio_mes: '',
+  tipo_vivienda: 'habitacion',
+  telefono_contacto: '',
+  email_contacto: '',
+  wifi: false,
+  terraza: false,
+  garaje: false
 })
 
-const usuario = ref(JSON.parse(localStorage.getItem('usuarioObj') || 'null'))
-const rol = computed(() => localStorage.getItem('rol') || '')
-const token = computed(() => localStorage.getItem('token') || '')
-const usuarioId = computed(() => localStorage.getItem('usuarioId') || '')
-
-const puedeCrear = computed(() => ['propietario', 'administrador'].includes(rol.value))
+const rol = computed(() => props.usuario?.rol || '')
+const puedeCrear = computed(() => rol.value === 'propietario' || rol.value === 'administrador')
 
 function puedeEliminar(anuncio) {
+  if (!props.usuario) return false
   if (rol.value === 'administrador') return true
-  if (rol.value === 'propietario' && String(anuncio.propietario) === String(usuarioId.value)) return true
+  if (rol.value === 'propietario' && anuncio.propietario === props.usuario.nombre) return true
   return false
 }
 
-function tipoTexto(tipo) {
-  const tipos = { habitacion: 'Habitacion', piso_completo: 'Piso completo', estudio: 'Estudio' }
-  return tipos[tipo] || tipo
-}
-
 async function cargarAnuncios() {
-  cargando.value = true
   try {
-    const r = await fetch(`${apiUrl}/api/anuncios/`)
-    const datos = await r.json()
-    anuncios.value = Array.isArray(datos) ? datos : (datos.results || [])
+    const r = await fetch(`${URL_BACKEND}/api/anuncios/`)
+    if (!r.ok) throw new Error('Error al cargar')
+    anuncios.value = await r.json()
   } catch (e) {
     error.value = 'No se pudieron cargar los pisos'
   } finally {
@@ -118,11 +114,12 @@ async function cargarAnuncios() {
 async function crearAnuncio() {
   errorCrear.value = ''
   try {
-    const r = await fetch(`${apiUrl}/api/anuncios/`, {
+    const token = localStorage.getItem('token')
+    const r = await fetch(`${URL_BACKEND}/api/anuncios/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Token ${token.value}`
+        'Authorization': `Token ${token}`
       },
       body: JSON.stringify(nuevoAnuncio.value)
     })
@@ -130,23 +127,29 @@ async function crearAnuncio() {
       const datos = await r.json()
       throw new Error(JSON.stringify(datos))
     }
+    const creado = await r.json()
+    anuncios.value.unshift(creado)
     mostrarFormulario.value = false
-    await cargarAnuncios()
+    nuevoAnuncio.value = {
+      titulo: '', localizacion: '', descripcion: '', precio_mes: '',
+      tipo_vivienda: 'habitacion', telefono_contacto: '', email_contacto: '',
+      wifi: false, terraza: false, garaje: false
+    }
   } catch (e) {
-    errorCrear.value = e.message
+    errorCrear.value = 'Error al publicar: ' + e.message
   }
 }
 
 async function eliminarAnuncio(id) {
-  if (!confirm('Seguro que quieres eliminar este piso?')) return
   try {
-    await fetch(`${apiUrl}/api/anuncios/${id}/`, {
+    const token = localStorage.getItem('token')
+    await fetch(`${URL_BACKEND}/api/anuncios/${id}/`, {
       method: 'DELETE',
-      headers: { 'Authorization': `Token ${token.value}` }
+      headers: { 'Authorization': `Token ${token}` }
     })
-    await cargarAnuncios()
+    anuncios.value = anuncios.value.filter(a => a.id !== id)
   } catch (e) {
-    alert('No se pudo eliminar')
+    alert('Error al eliminar')
   }
 }
 
@@ -154,204 +157,41 @@ onMounted(cargarAnuncios)
 </script>
 
 <style scoped>
-.pagina {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-}
+.pagina { padding: 1rem 2rem; max-width: 900px; margin: 0 auto; }
 
-.zona-publicar {
-  margin-bottom: 2rem;
-}
+.zona-publicar { margin-bottom: 1.5rem; }
+.btn-publicar { background: #e94560; color: white; border: none; padding: 0.5rem 1.2rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
+.btn-publicar:hover { opacity: 0.88; }
 
-.btn-publicar {
-  background: #e94560;
-  color: white;
-  border: none;
-  padding: 0.6rem 1.4rem;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
+.formulario-piso { background: #1a1a2e; border: 1px solid #333; border-radius: 8px; padding: 1.5rem; margin-top: 1rem; }
+.formulario-piso h3 { color: #e94560; margin-bottom: 1rem; }
+.campos { display: flex; flex-direction: column; gap: 0.7rem; }
+.campos input, .campos textarea, .campos select { background: #16213e; border: 1px solid #444; color: #eee; padding: 0.5rem 0.7rem; border-radius: 5px; font-size: 0.88rem; }
+.campos textarea { min-height: 80px; resize: vertical; }
+.opciones-extra { display: flex; gap: 1rem; margin-top: 0.5rem; color: #aaa; font-size: 0.85rem; }
 
-.btn-publicar:hover {
-  opacity: 0.88;
-}
+.estado { text-align: center; padding: 2rem; color: #aaa; }
+.aviso-error { color: #e94560; font-size: 0.85rem; margin-top: 0.5rem; }
 
-.formulario-piso {
-  background: white;
-  border-radius: 10px;
-  padding: 1.5rem;
-  margin-top: 1rem;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-}
+.lista-pisos { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
 
-.formulario-piso h3 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  color: #1a1a2e;
-}
+.tarjeta { background: #16213e; border: 1px solid #1a1a2e; border-radius: 10px; padding: 1.2rem; transition: box-shadow 0.2s; }
+.tarjeta:hover { box-shadow: 0 4px 16px rgba(233,69,96,0.15); }
 
-.campos {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  margin-bottom: 1rem;
-}
+.tarjeta-cabecera { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.3rem; }
+.tarjeta-titulo { font-size: 1rem; font-weight: 600; color: white; margin: 0; }
+.tarjeta-precio { color: #e94560; font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
 
-.campos input,
-.campos textarea,
-.campos select {
-  padding: 0.5rem 0.8rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-family: inherit;
-}
+.tarjeta-lugar { color: #aaa; font-size: 0.82rem; margin: 0.2rem 0; }
+.tarjeta-desc { color: #ccc; font-size: 0.85rem; margin: 0.5rem 0; }
 
-.campos textarea {
-  min-height: 80px;
-  resize: vertical;
-}
+.tarjeta-extras { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.5rem 0; }
+.extra { background: #0f3460; color: #aaa; font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 10px; }
+.extra.tipo { background: #e94560; color: white; }
 
-.opciones-extra {
-  display: flex;
-  gap: 1.2rem;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
+.tarjeta-contacto { font-size: 0.8rem; color: #888; margin-top: 0.4rem; display: flex; flex-direction: column; gap: 0.2rem; }
 
-.conteo {
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 1.2rem;
-}
-
-.cuadricula {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.4rem;
-}
-
-.tarjeta {
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.15s;
-}
-
-.tarjeta:hover {
-  transform: translateY(-3px);
-}
-
-.tarjeta-tipo {
-  background: #e94560;
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.3rem 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.tarjeta-cuerpo {
-  padding: 1rem;
-  flex: 1;
-}
-
-.tarjeta-cuerpo h3 {
-  margin: 0 0 0.3rem;
-  font-size: 1rem;
-  color: #1a1a2e;
-}
-
-.ubicacion {
-  color: #888;
-  font-size: 0.82rem;
-  margin: 0 0 0.6rem;
-}
-
-.descripcion {
-  color: #444;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  margin: 0 0 0.8rem;
-}
-
-.extras {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-}
-
-.extras span {
-  background: #f0f0f0;
-  border-radius: 4px;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.75rem;
-  color: #555;
-}
-
-.tarjeta-pie {
-  padding: 0.8rem 1rem;
-  border-top: 1px solid #f0f0f0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.precio {
-  font-weight: 700;
-  color: #e94560;
-  font-size: 1rem;
-}
-
-.acciones {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.btn-contactar {
-  background: #1a1a2e;
-  color: white;
-  border: none;
-  padding: 0.35rem 0.8rem;
-  border-radius: 5px;
-  font-size: 0.8rem;
-  cursor: pointer;
-}
-
-.btn-contactar:hover {
-  opacity: 0.85;
-}
-
-.btn-borrar {
-  background: transparent;
-  color: #e94560;
-  border: 1px solid #e94560;
-  padding: 0.35rem 0.7rem;
-  border-radius: 5px;
-  font-size: 0.8rem;
-  cursor: pointer;
-}
-
-.btn-borrar:hover {
-  background: #e94560;
-  color: white;
-}
-
-.estado {
-  text-align: center;
-  padding: 3rem;
-  color: #666;
-}
-
-.aviso-error {
-  color: #e94560;
-  font-size: 0.85rem;
-}
+.tarjeta-acciones { margin-top: 0.8rem; }
+.btn-borrar { background: #333; color: #e94560; border: 1px solid #e94560; padding: 0.3rem 0.8rem; border-radius: 5px; cursor: pointer; font-size: 0.82rem; }
+.btn-borrar:hover { background: #e94560; color: white; }
 </style>
