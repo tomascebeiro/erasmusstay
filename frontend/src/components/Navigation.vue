@@ -56,12 +56,12 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-const apiUrl = 'https://erasmusstay-production.up.railway.app'
+const emit = defineEmits(['login', 'logout'])
 
-const usuario = ref(localStorage.getItem('usuario') || '')
-const rol = ref(localStorage.getItem('rol') || '')
-const token = ref(localStorage.getItem('token') || '')
+const BACKEND = 'https://erasmusstay-production.up.railway.app'
 
+const usuario = ref('')
+const rol = ref('')
 const modoRegistro = ref(false)
 const nombreUsuario = ref('')
 const contrasena = ref('')
@@ -73,29 +73,25 @@ const error = ref('')
 const exito = ref('')
 
 const etiquetaRol = computed(() => {
-  const etiquetas = { estudiante: 'Estudiante', propietario: 'Propietario', administrador: 'Administrador' }
-  return etiquetas[rol.value] || rol.value
+  if (rol.value === 'administrador') return 'Administrador'
+  if (rol.value === 'propietario') return 'Propietario'
+  return 'Estudiante'
 })
 
 async function iniciarSesion() {
   error.value = ''
   try {
-    const respuesta = await fetch(`${apiUrl}/api/login/`, {
+    const res = await fetch(`${BACKEND}/api/login/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: nombreUsuario.value, password: contrasena.value })
     })
-    const datos = await respuesta.json()
-    if (!respuesta.ok) throw new Error(datos.error || 'Error al iniciar sesion')
+    const datos = await res.json()
+    if (!res.ok) throw new Error(datos.error || 'Error al entrar')
     localStorage.setItem('token', datos.token)
-    localStorage.setItem('usuario', datos.username)
-    localStorage.setItem('rol', datos.rol)
-    localStorage.setItem('usuarioId', datos.id)
     usuario.value = datos.username
     rol.value = datos.rol
-    token.value = datos.token
-    nombreUsuario.value = ''
-    contrasena.value = ''
+    emit('login', { nombre: datos.username, rol: datos.rol })
   } catch (e) {
     error.value = e.message
   }
@@ -105,7 +101,7 @@ async function registrarse() {
   error.value = ''
   exito.value = ''
   try {
-    const respuesta = await fetch(`${apiUrl}/api/register/`, {
+    const res = await fetch(`${BACKEND}/api/register/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -115,8 +111,8 @@ async function registrarse() {
         rol: regRol.value
       })
     })
-    const datos = await respuesta.json()
-    if (!respuesta.ok) throw new Error(JSON.stringify(datos))
+    const datos = await res.json()
+    if (!res.ok) throw new Error(JSON.stringify(datos))
     exito.value = 'Cuenta creada. Ya puedes entrar.'
     modoRegistro.value = false
   } catch (e) {
@@ -125,18 +121,15 @@ async function registrarse() {
 }
 
 function cerrarSesion() {
-  localStorage.clear()
+  localStorage.removeItem('token')
   usuario.value = ''
   rol.value = ''
-  token.value = ''
+  emit('logout')
 }
 </script>
 
 <style scoped>
 .cabecera {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  color: white;
-  padding: 0.8rem 2rem;
   display: flex;
   align-items: center;
   gap: 2rem;
@@ -145,7 +138,10 @@ function cerrarSesion() {
   position: sticky;
   top: 0;
   z-index: 100;
+  background: #0f3460;
+  padding: 0.6rem 1.5rem;
 }
+
 .cabecera-marca { display: flex; align-items: center; gap: 0.8rem; }
 .cabecera-logo-texto { display: flex; flex-direction: column; }
 .cabecera-titulo { font-size: 1.2rem; font-weight: 700; color: #e94560; letter-spacing: 0.03em; }
@@ -154,21 +150,25 @@ function cerrarSesion() {
 .cabecera-nav a { color: #ccc; text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
 .cabecera-nav a:hover { color: #e94560; }
 .cabecera-sesion { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+
 .usuario-info { display: flex; align-items: center; gap: 0.5rem; }
-.usuario-nombre { font-size: 0.9rem; font-weight: 500; }
-.etiqueta-rol { font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: #444; }
+.usuario-nombre { font-size: 0.9rem; font-weight: 500; color: white; }
+.etiqueta-rol { font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
 .etiqueta-rol--administrador { background: #e94560; color: white; }
 .etiqueta-rol--propietario { background: #f5a623; color: #1a1a2e; }
 .etiqueta-rol--estudiante { background: #27ae60; color: white; }
+
 .pestanas-auth { display: flex; gap: 0.4rem; }
-.pestana { padding: 0.3rem 0.8rem; border: 1px solid #555; background: transparent; color: #aaa; border-radius: 4px; cursor: pointer; font-size: 0.82rem; transition: all 0.2s; }
-.pestana--activa, .pestana:hover { background: #e94560; border-color: #e94560; color: white; }
+.pestana { padding: 0.15rem 0.5rem; border: 1px solid #555; background: transparent; color: #aaa; border-radius: 4px; cursor: pointer; font-size: 0.82rem; }
+.pestana--activa { background: #e94560; border-color: #e94560; color: white; }
+
 .formulario-auth { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
-.formulario-auth input, .formulario-auth select { padding: 0.4rem 0.6rem; border-radius: 5px; border: none; font-size: 0.82rem; min-width: 110px; flex: 1; }
-.boton { padding: 0.4rem 0.9rem; border: none; border-radius: 5px; cursor: pointer; font-size: 0.82rem; font-weight: 600; transition: opacity 0.2s; }
-.boton:hover { opacity: 0.85; }
-.boton--primario { background: #e94560; color: white; }
+.formulario-auth input, .formulario-auth select { padding: 0.4rem 0.6rem; border-radius: 5px; border: none; font-size: 0.82rem; min-width: 110px; background: #16213e; color: #eee; }
+.boton { padding: 0.4rem 0.9rem; border-radius: 5px; border: none; cursor: pointer; font-size: 0.82rem; }
+.boton--primario { background: #e94560; color: white; font-weight: 600; }
 .boton--salir { background: #333; color: #ccc; }
+.boton:hover { opacity: 0.85; }
+
 .mensaje-error { color: #ff6b6b; font-size: 0.8rem; width: 100%; }
 .mensaje-exito { color: #2ecc71; font-size: 0.8rem; width: 100%; }
 </style>
