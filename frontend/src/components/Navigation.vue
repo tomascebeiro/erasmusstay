@@ -40,8 +40,11 @@
     </div>
   </nav>
 </template>
+
 <script setup>
 import { ref, onMounted } from 'vue'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const username = ref('')
 const password = ref('')
@@ -64,7 +67,7 @@ onMounted(() => {
 const login = async () => {
   error.value = ''
   try {
-    const response = await fetch('http://localhost:8000/api-token-auth/', {
+    const response = await fetch(`${API_URL}/api-token-auth/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -85,19 +88,16 @@ const login = async () => {
     localStorage.setItem('authToken', data.token)
     localStorage.setItem('authUser', username.value)
     user.value = username.value
-    username.value = ''
-    password.value = ''
-  } catch (err) {
-    error.value = 'No se pudo conectar con el backend.'
+  } catch (e) {
+    error.value = 'Error de conexión'
   }
 }
 
 const register = async () => {
   error.value = ''
   success.value = ''
-
   try {
-    const response = await fetch('http://localhost:8000/api/register/', {
+    const response = await fetch(`${API_URL}/api/register/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -106,27 +106,20 @@ const register = async () => {
         username: regUsername.value,
         email: regEmail.value,
         password: regPassword.value,
-        rol: regRole.value,
+        role: regRole.value,
       }),
     })
 
     if (!response.ok) {
       const data = await response.json()
-      error.value = Object.values(data).flat().join(' ') || 'No se pudo crear el usuario.'
+      error.value = data.detail || JSON.stringify(data)
       return
     }
 
-    const data = await response.json()
-    localStorage.setItem('authToken', data.token)
-    localStorage.setItem('authUser', regUsername.value)
-    user.value = regUsername.value
-    regUsername.value = ''
-    regEmail.value = ''
-    regPassword.value = ''
-    regRole.value = 'estudiante'
-    success.value = 'Usuario registrado correctamente.'
-  } catch (err) {
-    error.value = 'No se pudo conectar con el backend.'
+    success.value = '¡Registro exitoso! Ya puedes iniciar sesión.'
+    registerMode.value = false
+  } catch (e) {
+    error.value = 'Error de conexión'
   }
 }
 
@@ -136,88 +129,3 @@ const logout = () => {
   user.value = ''
 }
 </script>
-
-<style scoped>
-.navigation {
-  background-color: #f8f9fa;
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.navigation ul {
-  list-style: none;
-  display: flex;
-  gap: 1rem;
-  margin: 0;
-  padding: 0;
-}
-
-.navigation a {
-  text-decoration: none;
-  color: #007bff;
-}
-
-.navigation a:hover {
-  text-decoration: underline;
-}
-
-.login {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.login form {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.login input {
-  padding: 0.5rem;
-}
-
-.login button {
-  padding: 0.5rem 1rem;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.login button:hover {
-  background-color: #0056b3;
-}
-
-.auth-tabs {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.auth-tabs button {
-  background: transparent;
-  border: 1px solid #007bff;
-  color: #007bff;
-  padding: 0.4rem 0.8rem;
-  cursor: pointer;
-}
-
-.auth-tabs button.active {
-  background-color: #007bff;
-  color: white;
-}
-
-.error {
-  color: #c53030;
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-.success {
-  color: #276749;
-  margin: 0;
-  font-size: 0.9rem;
-}
-</style>
