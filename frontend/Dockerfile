@@ -1,11 +1,13 @@
 # Fase 1: build
 FROM node:20-alpine AS builder
 WORKDIR /app
+
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 COPY package.json package-lock.json* ./
 RUN npm install --no-audit
 COPY . .
-ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
 RUN npm run build
 
 # Fase 2: servidor Nginx
