@@ -9,7 +9,7 @@
         <p><strong>{{ anuncio.localizacion }}</strong></p>
         <p>{{ anuncio.descripcion.substring(0, 80) }}...</p>
         <div class="tags">
-          <span v-if="anuncio.wifi">📶 WiFi</span>
+          <span v-if="anuncio.wifi">📶 Wifi</span>
           <span v-if="anuncio.terraza">🏡 Terraza</span>
           <span v-if="anuncio.garaje">🚗 Garaje</span>
         </div>
@@ -28,14 +28,16 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
 const anuncios = ref([])
 const cargando = ref(true)
 const error = ref(null)
 
 onMounted(async () => {
   try {
-        const res = await fetch('https://erasmusstay-production.up.railway.app/api/anuncios/')    
-                anuncios.value = (await res.json()).results || []
+    const res = await fetch(`${API_URL}/api/anuncios/`)
+    anuncios.value = (await res.json()).results || []
   } catch (e) {
     error.value = e.message
   } finally {
@@ -82,28 +84,22 @@ h2 { margin-bottom: 2rem; }
   border-radius: 3px;
 }
 
-.rating {
-  margin: 0.5rem 0;
-  color: #ffc107;
-  font-weight: bold;
-}
+.rating { color: #f39c12; margin: 0.5rem 0; }
 
 .footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
 }
 
-.price { color: #28a745; font-weight: bold; font-size: 1.1rem; }
+.price { font-weight: bold; color: #28a745; font-size: 1.1rem; }
 
 button {
   background: #007bff;
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 1rem;
   border-radius: 4px;
   cursor: pointer;
 }
