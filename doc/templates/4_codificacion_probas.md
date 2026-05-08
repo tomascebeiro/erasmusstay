@@ -4,10 +4,15 @@
 
 ## Prototipo 1
 ### Data de entrega: 14/04/2026
-### Funcionalidades implementadas: Implementación de listado de anuncios, implementación de detalle anuncios.
+### Funcionalidades implementadas: - Implementación do listado de anuncios.
+- Implementación do detalle dos anuncios.
+- Estrutura inicial do proxecto dividida en módulos.
+- Primeira base funcional da aplicación para visualización de contido.
 ### Observacións: 
+- Neste primeiro prototipo desenvolveuse a base inicial da aplicación, centrada na visualización dos anuncios.
+- O obxectivo principal foi dispoñer dunha primeira versión funcional para validar a estrutura do proxecto e a navegación entre pantallas.
 ### Innovación: 
-
+- Desenvolvemento dunha primeira versión funcional orientada á visualización real de anuncios.
 ## Prototipo 2
 ### Data de entrega: 07/05/2026
 ### Funcionalidades implementadas: 
@@ -24,7 +29,6 @@
 ### Innovación: 
 - Automatización da sincronización do código entre plataformas mediante mirroring.
 - Despregamento real do proxecto nun contorno web accesible en internet.
-- Validación do funcionamento do prototipo nun contorno externo ao desenvolvemento local.
 
 ## Prototipo 3
 ### Data de entrega: 
