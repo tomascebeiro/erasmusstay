@@ -68,7 +68,7 @@ const props = defineProps({
   usuario: Object
 })
 
-const URL_BACKEND = ''
+const URL_BACKEND = 'https://erasmusstay-production.up.railway.app'
 
 const anuncios = ref([])
 const cargando = ref(true)
