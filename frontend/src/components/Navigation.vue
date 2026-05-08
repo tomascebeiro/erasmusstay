@@ -86,7 +86,13 @@ async function iniciarSesion() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: nombreUsuario.value, password: contrasena.value })
     })
-    const datos = await res.json()
+    const text = await res.text()
+    let datos
+    try {
+      datos = JSON.parse(text)
+    } catch {
+      throw new Error(`Respuesta del servidor no es JSON: ${text}`)
+    }
     if (!res.ok) throw new Error(datos.error || 'Error al entrar')
     localStorage.setItem('token', datos.token)
     usuario.value = datos.username
