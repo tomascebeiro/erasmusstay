@@ -95,7 +95,7 @@ const puedeCrear = computed(() => rol.value === 'propietario' || rol.value === '
 function puedeEliminar(anuncio) {
   if (!props.usuario) return false
   if (rol.value === 'administrador') return true
-  if (rol.value === 'propietario' && anuncio.propietario === props.usuario.nombre) return true
+  if (rol.value === 'propietario' && anuncio.propietario_nombre === props.usuario.nombre) return true
   return false
 }
 
@@ -103,7 +103,8 @@ async function cargarAnuncios() {
   try {
     const r = await fetch(`${URL_BACKEND}/api/anuncios/`)
     if (!r.ok) throw new Error('Error al cargar')
-    anuncios.value = await r.json()
+    const datos = await r.json()
+    anuncios.value = datos.results || []
   } catch (e) {
     error.value = 'No se pudieron cargar los pisos'
   } finally {
