@@ -22,7 +22,7 @@
           <input v-model="nuevoAnuncio.email_contacto" type="email" placeholder="Email" />
         </div>
         <div class="opciones-extra">
-          <label><input type="checkbox" v-model="nuevoAnuncio.wifi" /> Wifi</label>
+          <label><input type="checkbox" v-model="nuevoAnuncio.wifi" /> Wifi incluido</label>
           <label><input type="checkbox" v-model="nuevoAnuncio.terraza" /> Terraza</label>
           <label><input type="checkbox" v-model="nuevoAnuncio.garaje" /> Garaje</label>
         </div>
@@ -38,7 +38,7 @@
       <div v-for="anuncio in anuncios" :key="anuncio.id" class="tarjeta">
         <div class="tarjeta-cabecera">
           <h2 class="tarjeta-titulo">{{ anuncio.titulo }}</h2>
-          <span class="tarjeta-precio">{{ anuncio.precio_mes }}&euro;/mes</span>
+          <span class="tarjeta-precio">{{ anuncio.precio_mes }}€/mes</span>
         </div>
         <p class="tarjeta-lugar">{{ anuncio.localizacion }}</p>
         <p class="tarjeta-desc">{{ anuncio.descripcion }}</p>
@@ -95,7 +95,7 @@ const puedeCrear = computed(() => rol.value === 'propietario' || rol.value === '
 function puedeEliminar(anuncio) {
   if (!props.usuario) return false
   if (rol.value === 'administrador') return true
-  if (rol.value === 'propietario' && anuncio.propietario_nombre === props.usuario.nombre) return true
+  if (rol.value === 'propietario' && anuncio.propietario === props.usuario.nombre) return true
   return false
 }
 
@@ -103,8 +103,7 @@ async function cargarAnuncios() {
   try {
     const r = await fetch(`${URL_BACKEND}/api/anuncios/`)
     if (!r.ok) throw new Error('Error al cargar')
-    const datos = await r.json()
-    anuncios.value = datos.results || datos
+    anuncios.value = await r.json()
   } catch (e) {
     error.value = 'No se pudieron cargar los pisos'
   } finally {
@@ -158,41 +157,41 @@ onMounted(cargarAnuncios)
 </script>
 
 <style scoped>
-.pagina { padding: 1rem 2rem; max-width: 960px; margin: 0 auto; }
+.pagina { padding: 1rem 2rem; max-width: 900px; margin: 0 auto; }
 
 .zona-publicar { margin-bottom: 1.5rem; }
 .btn-publicar { background: #e94560; color: white; border: none; padding: 0.5rem 1.2rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
 .btn-publicar:hover { opacity: 0.88; }
 
-.formulario-piso { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; margin-top: 1rem; }
+.formulario-piso { background: #1a1a2e; border: 1px solid #333; border-radius: 8px; padding: 1.5rem; margin-top: 1rem; }
 .formulario-piso h3 { color: #e94560; margin-bottom: 1rem; }
 .campos { display: flex; flex-direction: column; gap: 0.7rem; }
-.campos input, .campos textarea, .campos select { border: 1px solid #ccc; color: #333; padding: 0.5rem 0.7rem; border-radius: 5px; font-size: 0.88rem; }
+.campos input, .campos textarea, .campos select { background: #16213e; border: 1px solid #444; color: #eee; padding: 0.5rem 0.7rem; border-radius: 5px; font-size: 0.88rem; }
 .campos textarea { min-height: 80px; resize: vertical; }
-.opciones-extra { display: flex; gap: 1rem; margin-top: 0.5rem; color: #555; font-size: 0.85rem; }
+.opciones-extra { display: flex; gap: 1rem; margin-top: 0.5rem; color: #aaa; font-size: 0.85rem; }
 
-.estado { text-align: center; padding: 2rem; color: #666; }
+.estado { text-align: center; padding: 2rem; color: #aaa; }
 .aviso-error { color: #e94560; font-size: 0.85rem; margin-top: 0.5rem; }
 
-.lista-pisos { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; margin-top: 1rem; }
+.lista-pisos { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
 
-.tarjeta { background: white; border: 1px solid #e0e0e0; border-radius: 10px; padding: 1.2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.07); transition: box-shadow 0.2s; }
-.tarjeta:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+.tarjeta { background: #16213e; border: 1px solid #1a1a2e; border-radius: 10px; padding: 1.2rem; transition: box-shadow 0.2s; }
+.tarjeta:hover { box-shadow: 0 4px 16px rgba(233,69,96,0.15); }
 
 .tarjeta-cabecera { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.3rem; }
-.tarjeta-titulo { font-size: 1rem; font-weight: 600; color: #1a1a2e; margin: 0; }
+.tarjeta-titulo { font-size: 1rem; font-weight: 600; color: white; margin: 0; }
 .tarjeta-precio { color: #e94560; font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
 
-.tarjeta-lugar { color: #666; font-size: 0.82rem; margin: 0.2rem 0; }
-.tarjeta-desc { color: #444; font-size: 0.85rem; margin: 0.5rem 0; }
+.tarjeta-lugar { color: #aaa; font-size: 0.82rem; margin: 0.2rem 0; }
+.tarjeta-desc { color: #ccc; font-size: 0.85rem; margin: 0.5rem 0; }
 
 .tarjeta-extras { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.5rem 0; }
-.extra { background: #f0f2f5; color: #555; font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 10px; }
+.extra { background: #0f3460; color: #aaa; font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 10px; }
 .extra.tipo { background: #e94560; color: white; }
 
 .tarjeta-contacto { font-size: 0.8rem; color: #888; margin-top: 0.4rem; display: flex; flex-direction: column; gap: 0.2rem; }
 
 .tarjeta-acciones { margin-top: 0.8rem; }
-.btn-borrar { background: white; color: #e94560; border: 1px solid #e94560; padding: 0.3rem 0.8rem; border-radius: 5px; cursor: pointer; font-size: 0.82rem; }
+.btn-borrar { background: #333; color: #e94560; border: 1px solid #e94560; padding: 0.3rem 0.8rem; border-radius: 5px; cursor: pointer; font-size: 0.82rem; }
 .btn-borrar:hover { background: #e94560; color: white; }
 </style>
