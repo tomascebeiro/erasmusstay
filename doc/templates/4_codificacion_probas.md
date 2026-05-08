@@ -16,11 +16,9 @@
 ## Prototipo 2
 ### Data de entrega: 07/05/2026
 ### Funcionalidades implementadas: 
-- Despregamento da aplicación na web mediante Railway.
-- Sincronización automática do repositorio entre GitLab e GitHub mediante repository mirroring.
-- Integración entre frontend e backend para a carga dos anuncios desde a API.
-- Configuración inicial de login, rexistro e conexión coa base do backend.
-- Publicación do código actualizado no repositorio principal de GitLab.
+- Rexistro de usuarios na plataforma diferenciando entre estudantes e propietarios.
+- Edición do perfil de usuario (datos persoais básicos).
+- Visualización detallada dos anuncios con toda a información dispoñible.
 ### Observacións: - O proxecto está accesible desde unha dirección web pública para a súa revisión.
 
 - Configurouse GitLab como repositorio principal e GitHub como repositorio sincronizado automaticamente.
