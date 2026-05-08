@@ -9,7 +9,7 @@
 ### Innovación: 
 
 ## Prototipo 2
-### Data de entrega: 
+### Data de entrega: 07/05/2026
 ### Funcionalidades implementadas: 
 - Despregamento da aplicación na web mediante Railway.
 - Sincronización automática do repositorio entre GitLab e GitHub mediante repository mirroring.
@@ -22,6 +22,9 @@
 - Railway empregouse como plataforma de despregamento para publicar a aplicación en liña.
 - Durante esta iteración tamén se revisou a conexión entre frontend e backend en produción.
 ### Innovación: 
+- Automatización da sincronización do código entre plataformas mediante mirroring.
+- Despregamento real do proxecto nun contorno web accesible en internet.
+- Validación do funcionamento do prototipo nun contorno externo ao desenvolvemento local.
 
 ## Prototipo 3
 ### Data de entrega: 
