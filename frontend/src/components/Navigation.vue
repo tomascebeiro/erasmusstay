@@ -58,7 +58,7 @@ import { ref, computed } from 'vue'
 
 const emit = defineEmits(['login', 'logout'])
 
-const BACKEND = ''
+const BACKEND = 'https://erasmusstay-production.up.railway.app'
 
 const usuario = ref('')
 const rol = ref('')
