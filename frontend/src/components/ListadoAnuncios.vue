@@ -14,7 +14,7 @@
           <textarea v-model="nuevoAnuncio.descripcion" placeholder="Describe el piso..." required></textarea>
           <input v-model="nuevoAnuncio.precio_mes" type="number" placeholder="Precio al mes (euros)" required />
           <select v-model="nuevoAnuncio.tipo_vivienda">
-            <option value="habitacion">Habitacion</option>
+            <option value="habitacion">Habitación</option>
             <option value="piso_completo">Piso completo</option>
             <option value="estudio">Estudio</option>
           </select>
