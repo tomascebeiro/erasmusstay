@@ -2,7 +2,6 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Anuncio, Valoracion, ImagenAnuncio, PerfilUsuario
 
-
 class ImagenAnuncioSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImagenAnuncio
@@ -10,14 +9,17 @@ class ImagenAnuncioSerializer(serializers.ModelSerializer):
 
 
 class ValoracionSerializer(serializers.ModelSerializer):
+    # Campo de solo lectura para extraer el nombre del autor automáticamente
     usuario_nombre = serializers.CharField(source='usuario.username', read_only=True)
 
     class Meta:
         model = Valoracion
         fields = ['id', 'anuncio', 'usuario', 'usuario_nombre', 'puntuacion', 'comentario', 'fecha_creacion']
+        read_only_fields = ['usuario'] # El usuario lo inyecta el backend por seguridad
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    # write_only=True evita que el rol se devuelva expuesto en la respuesta de creación del User
     rol = serializers.ChoiceField(choices=PerfilUsuario.Rol.choices, default=PerfilUsuario.Rol.ESTUDIANTE, write_only=True)
 
     class Meta:
@@ -29,9 +31,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
+        """ Sobreescritura del método para crear atómicamente User + PerfilUsuario """
         role = validated_data.pop('rol', PerfilUsuario.Rol.ESTUDIANTE)
         password = validated_data.pop('password')
+        
         user = User.objects.create_user(**validated_data, password=password)
+        # Se genera automáticamente la vinculación 1 a 1 requerida
         PerfilUsuario.objects.create(usuario=user, rol=role)
         return user
 
@@ -65,3 +70,4 @@ class AnuncioSerializer(serializers.ModelSerializer):
             'imagenes',
             'valoraciones',
         ]
+        read_only_fields = ['propietario', 'aprobado'] # Solo el admin puede modificar 'aprobado'

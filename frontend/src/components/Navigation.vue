@@ -1,174 +1,110 @@
-<template>
-  <header class="cabecera">
-    <div class="cabecera-marca">
-      <div class="cabecera-logo-texto">
-        <span class="cabecera-titulo">ErasmusStay</span>
-        <span class="cabecera-subtitulo">Pisos en Malta para estudiantes Erasmus</span>
-      </div>
-    </div>
+<script setup>
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '../composables/useAuth'
 
-    <nav class="cabecera-nav">
-      <a href="#inicio">Inicio</a>
-      <a href="#anuncios">Anuncios</a>
-      <a href="#contacto">Contacto</a>
+const router = useRouter()
+const menuOpen = ref(false)
+
+const { user, isAuthenticated, logout } = useAuth()
+
+const closeMenu = () => {
+  menuOpen.value = false
+}
+
+const handleLogout = () => {
+  logout()
+  closeMenu()
+  router.push('/')
+}
+
+// Flexible role logic supporting native admin username or role text
+const isAdmin = computed(() => {
+  return isAuthenticated.value && (user.value?.rol === 'administrador' || user.value?.username === 'admin')
+})
+
+const canPublish = computed(() => {
+  if (!isAuthenticated.value) return false
+  return ['propietario', 'administrador'].includes(user.value?.rol) || user.value?.username === 'admin'
+})
+
+// Visual mapping to keep the UI strictly in English
+const displayRole = computed(() => {
+  if (!user.value?.rol) return 'User'
+  const role = user.value.rol.toLowerCase().trim()
+  if (role === 'administrador') return 'Admin'
+  if (role === 'propietario') return 'Owner'
+  if (role === 'estudiante') return 'Student'
+  return 'User'
+})
+</script>
+
+<template>
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+    <nav class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      
+      <router-link to="/" class="flex items-center gap-2" @click="closeMenu">
+        <span class="font-bold text-xl text-slate-900 tracking-tight">Erasmus<span class="text-slate-600">Stay</span></span>
+      </router-link>
+
+      <div class="hidden md:flex items-center gap-6">
+        <router-link to="/" class="text-sm font-medium text-slate-600 hover:text-slate-900" active-class="text-slate-900 font-semibold">Home</router-link>
+        <router-link to="/anuncios" class="text-sm font-medium text-slate-600 hover:text-slate-900" active-class="text-slate-900 font-semibold">Accommodations</router-link>
+        <router-link to="/contacto" class="text-sm font-medium text-slate-600 hover:text-slate-900" active-class="text-slate-900 font-semibold">Contact</router-link>
+        
+        <router-link v-if="isAdmin" to="/admin-panel" class="text-sm font-medium text-blue-600 hover:text-blue-700" active-class="text-blue-700 font-semibold">Admin Panel</router-link>
+      </div>
+
+      <div class="hidden md:flex items-center gap-3">
+        <template v-if="isAuthenticated">
+          <router-link to="/profile" class="text-sm font-medium text-slate-600 hover:text-slate-900 mr-2" active-class="text-slate-900 font-semibold">
+            My Profile
+          </router-link>
+
+          <router-link v-if="canPublish" to="/crear-anuncio" class="text-sm font-medium bg-slate-900 text-white px-4 py-2 rounded hover:bg-slate-800 transition">
+            Publish Listing
+          </router-link>
+          
+          <div class="flex items-center gap-3 pl-4 border-l border-slate-200">
+            <div class="text-right">
+              <p class="text-sm font-bold text-slate-900 leading-none">{{ user?.username }}</p>
+              <p class="text-xs text-slate-400 mt-1">{{ displayRole }}</p>
+            </div>
+            <button @click="handleLogout" class="text-sm text-slate-500 hover:text-red-600 font-medium transition-colors">Logout</button>
+          </div>
+        </template>
+
+        <template v-else>
+          <router-link to="/login" class="text-sm font-medium bg-slate-100 text-slate-900 px-5 py-2 rounded hover:bg-slate-200 transition">
+            Login
+          </router-link>
+          <router-link to="/register" class="text-sm font-medium bg-slate-900 text-white px-5 py-2 rounded hover:bg-slate-800 transition">
+            Register
+          </router-link>
+        </template>
+      </div>
+
+      <button class="md:hidden text-slate-900 p-1" @click="menuOpen = !menuOpen">
+        <svg v-if="!menuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
     </nav>
 
-    <div class="cabecera-sesion">
-      <template v-if="usuario">
-        <div class="usuario-info">
-          <span class="usuario-nombre">{{ usuario }}</span>
-          <span class="etiqueta-rol" :class="'etiqueta-rol--' + rol">{{ etiquetaRol }}</span>
-        </div>
-        <button class="boton boton--salir" @click="cerrarSesion">Cerrar sesion</button>
-      </template>
-
-      <template v-else>
-        <div class="pestanas-auth">
-          <button :class="['pestana', { 'pestana--activa': !modoRegistro }]" @click="modoRegistro = false">Entrar</button>
-          <button :class="['pestana', { 'pestana--activa': modoRegistro }]" @click="modoRegistro = true">Registrarse</button>
-        </div>
-
-        <form v-if="!modoRegistro" class="formulario-auth" @submit.prevent="iniciarSesion">
-          <input v-model="nombreUsuario" type="text" placeholder="Usuario" required />
-          <input v-model="contrasena" type="password" placeholder="Contrasena" required />
-          <button type="submit" class="boton boton--primario">Entrar</button>
-          <p v-if="error" class="mensaje-error">{{ error }}</p>
-        </form>
-
-        <form v-else class="formulario-auth" @submit.prevent="registrarse">
-          <input v-model="regNombre" type="text" placeholder="Usuario" required />
-          <input v-model="regEmail" type="email" placeholder="Correo" required />
-          <input v-model="regContrasena" type="password" placeholder="Contrasena" required />
-          <select v-model="regRol">
-            <option value="estudiante">Estudiante</option>
-            <option value="propietario">Propietario</option>
-            <option value="administrador">Administrador</option>
-          </select>
-          <button type="submit" class="boton boton--primario">Crear cuenta</button>
-          <p v-if="error" class="mensaje-error">{{ error }}</p>
-          <p v-if="exito" class="mensaje-exito">{{ exito }}</p>
-        </form>
-      </template>
+    <div v-if="menuOpen" class="md:hidden bg-white border-t border-slate-200 p-4 space-y-3 shadow-sm">
+      <router-link to="/" class="block text-slate-600 font-medium" @click="closeMenu">Home</router-link>
+      <router-link to="/anuncios" class="block text-slate-600 font-medium" @click="closeMenu">Accommodations</router-link>
+      <router-link to="/contacto" class="block text-slate-600 font-medium" @click="closeMenu">Contact</router-link>
+      <router-link v-if="isAdmin" class="block text-blue-600 font-medium" to="/admin-panel" @click="closeMenu">Admin Panel</router-link>
+      <router-link v-if="isAuthenticated" class="block text-slate-600 font-medium" to="/profile" @click="closeMenu">My Profile</router-link>
+      
+      <div class="pt-4 border-t border-slate-100 flex flex-col gap-2" v-if="!isAuthenticated">
+        <router-link to="/login" class="text-center bg-slate-100 text-slate-900 py-2 rounded font-medium" @click="closeMenu">Login</router-link>
+        <router-link to="/register" class="text-center bg-slate-900 text-white py-2 rounded font-medium" @click="closeMenu">Register</router-link>
+      </div>
+      <div class="pt-4 border-t border-slate-100 flex flex-col gap-2" v-else>
+        <router-link v-if="canPublish" to="/crear-anuncio" class="text-center bg-slate-900 text-white py-2 rounded font-medium" @click="closeMenu">Publish Listing</router-link>
+        <button @click="handleLogout" class="text-center bg-red-50 text-red-600 py-2 rounded font-medium">Logout</button>
+      </div>
     </div>
   </header>
 </template>
-
-<script setup>
-import { ref, computed } from 'vue'
-
-const emit = defineEmits(['login', 'logout'])
-
-const BACKEND = 'https://erasmusstay-production.up.railway.app'
-
-const usuario = ref('')
-const rol = ref('')
-const modoRegistro = ref(false)
-const nombreUsuario = ref('')
-const contrasena = ref('')
-const regNombre = ref('')
-const regEmail = ref('')
-const regContrasena = ref('')
-const regRol = ref('estudiante')
-const error = ref('')
-const exito = ref('')
-
-const etiquetaRol = computed(() => {
-  if (rol.value === 'administrador') return 'Administrador'
-  if (rol.value === 'propietario') return 'Propietario'
-  return 'Estudiante'
-})
-
-async function iniciarSesion() {
-  error.value = ''
-  try {
-    const res = await fetch(`${BACKEND}/api/login/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: nombreUsuario.value, password: contrasena.value })
-    })
-    const datos = await res.json()
-    if (!res.ok) throw new Error(datos.error || 'Error al entrar')
-    localStorage.setItem('token', datos.token)
-    usuario.value = datos.username
-    rol.value = datos.rol
-    emit('login', { nombre: datos.username, rol: datos.rol })
-  } catch (e) {
-    error.value = e.message
-  }
-}
-
-async function registrarse() {
-  error.value = ''
-  exito.value = ''
-  try {
-    const res = await fetch(`${BACKEND}/api/register/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: regNombre.value,
-        email: regEmail.value,
-        password: regContrasena.value,
-        rol: regRol.value
-      })
-    })
-    const datos = await res.json()
-    if (!res.ok) throw new Error(JSON.stringify(datos))
-    exito.value = 'Cuenta creada. Ya puedes entrar.'
-    modoRegistro.value = false
-  } catch (e) {
-    error.value = e.message
-  }
-}
-
-function cerrarSesion() {
-  localStorage.removeItem('token')
-  usuario.value = ''
-  rol.value = ''
-  emit('logout')
-}
-</script>
-
-<style scoped>
-.cabecera {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: #0f3460;
-  padding: 0.6rem 1.5rem;
-}
-
-.cabecera-marca { display: flex; align-items: center; gap: 0.8rem; }
-.cabecera-logo-texto { display: flex; flex-direction: column; }
-.cabecera-titulo { font-size: 1.2rem; font-weight: 700; color: #e94560; letter-spacing: 0.03em; }
-.cabecera-subtitulo { font-size: 0.7rem; color: #aaa; }
-.cabecera-nav { display: flex; gap: 1.2rem; flex: 1; }
-.cabecera-nav a { color: #ccc; text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
-.cabecera-nav a:hover { color: #e94560; }
-.cabecera-sesion { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
-
-.usuario-info { display: flex; align-items: center; gap: 0.5rem; }
-.usuario-nombre { font-size: 0.9rem; font-weight: 500; color: white; }
-.etiqueta-rol { font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
-.etiqueta-rol--administrador { background: #e94560; color: white; }
-.etiqueta-rol--propietario { background: #f5a623; color: #1a1a2e; }
-.etiqueta-rol--estudiante { background: #27ae60; color: white; }
-
-.pestanas-auth { display: flex; gap: 0.4rem; }
-.pestana { padding: 0.15rem 0.5rem; border: 1px solid #555; background: transparent; color: #aaa; border-radius: 4px; cursor: pointer; font-size: 0.82rem; }
-.pestana--activa { background: #e94560; border-color: #e94560; color: white; }
-
-.formulario-auth { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
-.formulario-auth input, .formulario-auth select { padding: 0.4rem 0.6rem; border-radius: 5px; border: none; font-size: 0.82rem; min-width: 110px; background: #16213e; color: #eee; }
-.boton { padding: 0.4rem 0.9rem; border-radius: 5px; border: none; cursor: pointer; font-size: 0.82rem; }
-.boton--primario { background: #e94560; color: white; font-weight: 600; }
-.boton--salir { background: #333; color: #ccc; }
-.boton:hover { opacity: 0.85; }
-
-.mensaje-error { color: #ff6b6b; font-size: 0.8rem; width: 100%; }
-.mensaje-exito { color: #2ecc71; font-size: 0.8rem; width: 100%; }
-</style>

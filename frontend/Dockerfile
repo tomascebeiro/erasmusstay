@@ -1,17 +1,15 @@
-# Fase 1: build
+# 1. Fase de construcción (Builder)
 FROM node:20-alpine AS builder
 WORKDIR /app
-
-ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
-
-COPY package.json package-lock.json* ./
-RUN npm install --no-audit
+COPY package*.json ./
+RUN npm install
 COPY . .
+# Esto genera la carpeta 'dist' (o 'build' dependiendo de tu framework)
 RUN npm run build
 
-# Fase 2: servidor Nginx
+# 2. Fase de servidor (Nginx)
 FROM nginx:alpine
+# Copiamos lo que se construyó en la fase anterior al servidor Nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
