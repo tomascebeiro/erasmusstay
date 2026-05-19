@@ -43,7 +43,7 @@
 - Panel de administración para xestionar usuarios, anuncios e comentarios.
 - Posibilidade de bloquear ou eliminar usuarios por parte dos administradores.
 - Sistema básico de reportes de anuncios ou usuarios sospeitosos.
-### Observacións: O proxecto foi reconstruído por completo nesta iteración, incorporando a función de panel de administrador. Actualmente presenta un erro no contorno web de produción que impide que se cargue a información correctamente; porén, ao levantar o proxecto en local funciona perfectamente e sen erros.
+### Observacións: O proxecto foi reconstruído por completo nesta iteración, incorporando a función de panel de administrador. Actualmente presenta un erro no contorno web de produción que impide que se cargue a información correctamente na web pero ao levantar o proxecto en local funciona perfectamente e sen erros.
 ### Innovación: Proxecto funcional.
 
 ## Prototipo 4
