@@ -1,34 +1,63 @@
 # Proxecto de fin de ciclo DAW
 
-> *Tarefa*: Realiza unha breve descrición do proxecto (entre 100 e 300 palabras). Resalta o fundamental **coas túas palabras**. Utiliza unha linguaxe correcta, pero natural, que o entenda todo o mundo, incluso e en especial, as persoas que non teñan un coñecemento técnico avanzado. Pode ser un estrato ou resumo dos apartados que se contemplan na memoria.
+Este proxecto é unha plataforma web deseñada para axudar a estudantes Erasmus que veñan a Malta a atopar aloxamento de forma segura e sinxela. A idea xorde da necesidade real de contar cunha alternativa fiable aos grupos de Facebook e WhatsApp, onde abundan os anuncios enganosos e os prezos abusivos.
+
+A plataforma permite aos estudantes buscar e filtrar habitacións e pisos por zona, prezo e dispoxiñbilidade, mentres que os propietarios e axencias poden publicar os seus aloxamentos. O sistema está construido cunha arquitectura moderna: frontend en Vue.js con Tailwind CSS, backend en Django con PostgreSQL, e despregado mediante Docker.
+
+O obxectivo final é crear un espazo de confianza onde estudantes e propietarios poidan conectar de forma transparente, eliminando intermediarios pouco fiables e reducindo o risco de estafa.
 
 ## Instalación/Posta en marcha
 
-> *Tarefa*: **Indica os pasos a seguir para que poidamos probar a vosa aplicación nun contorno de desenvolvemento**. 
-> Debes incluír carga de datos inicial automática para poder probar a app.
-> É necesario indicar as credenciais dos usuarios necesarios para probar a app.
-> No caso de usar unha API Rest debes poñer aquí un enlace ao documento "API reference" que creaches describindo a forma de interaccionar coa API.
+Requisitos previos: ter instalado **Docker** e **Docker Compose**.
+
+```bash
+# 1. Clonar o repositorio
+git clone https://gitlab.iessanclemente.net/dawo/a25tomascc.git
+cd a25tomascc
+
+# 2. Copiar e configurar as variables de entorno
+cp .env.example .env
+
+# 3. Levantar os contedores
+docker-compose up --build
+```
+
+A aplicación creará automaticamente a base de datos e cargara os datos iniciais de proba.
+
+**Credenciais de proba:**
+- Admin: `admin` / `admin1234`
+- Propietario: `propietario1` / `test1234`
+- Estudante: `estudante1` / `test1234`
 
 ## Uso
 
-> *Tarefa*: **Indica a URL para poder acceder á túa aplicación web e os usuarios para poder probala na avaliación **. 
+Unha vez levantados os contedores, accede á aplicación nos seguintes enderezos:
+
+- **Aplicación web:** http://localhost:5173
+- **API REST:** http://localhost:8000/api/
+- **Panel admin Django:** http://localhost:8000/admin/
 
 ## Sobre a persoa autora
 
-> *Tarefa*: Realiza unha breve descrición de quen es desde unha perspectiva profesional, os teus puntos fortes, tecnoloxías que máis dominas e o motivo de por que te decantaches por este proxecto. **Non máis de 200 palabras**. Indica unha forma fiable de contactar contigo no presente e no futuro.
+Són Tomás Cebeiro Cabo, estudante do ciclo superior de Desenvolvemento de Aplicacións Web (DAW) no IES San Clemente. Teño experiencia práctica en desenvolvemento web con WordPress, Django e Vue.js, xestión de comunidades online e creación de contido dixital. Decanteíme por este proxecto porque coñezo de primeira man o problema que resolve: pasei por esa situación buscando aloxamento en Malta e quixen darlle unha solución real a outros estudantes.
+
+Contacto: a25tomascc@iessanclemente.net
 
 ## Licencia
 
-> *Tarefa*: É requisito INDISPENSABLE licenciar explicitamente o proxecto. Crea un ficheiro `LICENSE` na raíz do repositorio.
+Este proxecto está licenciado baixo a licencia **MIT**. Consulta o ficheiro [LICENSE](LICENSE) na raíz do repositorio para máis información.
 
 ## Guía de contribución
 
-> *Tarefa*: Se o teu proxecto se trata de software libre, é importante que expoñas como se pode contribuír a el. Algúns exemplos disto son realizar novas funcionalidades, corrección e/ou optimización de código, realización de tests automatizados, novas interfaces de integración, desenvolvemento de plugins, etc. Intenta dar unha mensaxe concisa.
+As contribucións son benvidas. Podes colaborar:
+
+- Reportando erros ou suxerindo melloras abrindo un **Issue**.
+- Facendo un **fork**, creando unha rama coa túa mellora e enviando un **Merge Request**.
+- Mellorando a documentación ou engadindo tests automatizados.
+
+Asegúrate de que o código segue o estilo do proxecto e os tests pasan antes de enviar o Merge Request.
 
 ## Memoria
-
-> *Tarefa*: Indexa de forma ordenada a memoria do teu proxecto.
-> Durante a redacción da memoria, debes ir completando progresivamente o anexo de Referencias.
 
 1. [Estudo preliminar](doc/templates/1_estudo_preliminar.md)
 2. [Análise](doc/templates/2_analise.md)
