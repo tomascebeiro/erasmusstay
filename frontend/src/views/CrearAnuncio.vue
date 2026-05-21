@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 
-const API_URL = import.meta.env.VITE_API_URL || 'erasmusstay-production.up.railway.app'
+const API_URL = import.meta.env.VITE_API_URL || 'https://erasmusstay-production.up.railway.app'
 
 const router = useRouter()
 const { getAuthHeaders, user } = useAuth()

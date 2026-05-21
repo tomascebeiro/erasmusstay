@@ -3,7 +3,7 @@ import { onMounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://erasmusstay-production.up.railway.app'
+const API_URL = import.meta.env.VITE_API_URL || 'https://erasmusstay-production.up.railway.app'
 
 const route = useRoute()
 const router = useRouter()
