@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useAuth } from '../composables/useAuth'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL || 'erasmusstay-production.up.railway.app'
 const { user, getAuthHeaders, login } = useAuth()
 
 const loading = ref(false)
