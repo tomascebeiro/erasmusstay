@@ -4,7 +4,7 @@ const user = ref(null)
 const isAuthenticated = ref(false)
 const loadingAuth = ref(false)
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL || 'https://erasmusstay-production.up.railway.app'
 
 export function useAuth() {
   const token = computed(() => localStorage.getItem('token'))
