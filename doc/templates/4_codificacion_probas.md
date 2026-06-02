@@ -29,22 +29,32 @@
 - Despregamento real do proxecto nun contorno web accesible en internet.
 
 ## Prototipo 3
-### Data de entrega: 
+### Data de entrega: 23/05/2026
 ### Funcionalidades implementadas:
+- Inicio de sesión seguro mediante usuario e contrasinal.
+- Publicación de anuncios por parte dos propietarios, incluíndo descrición, prezo, imaxes e características do aloxamento.
+- Modificación e eliminación de anuncios por parte dos propietarios.
+- Panel de administración para xestionar usuarios e anuncios.
+- Visualización do número de teléfono do propietario (visto só por rexistrados) para que os estudantes poidan contactar directamente con el.
 ### Observacións:
+- Nesta fase o desenvolvemento centrouse na xestión do contido e o control de acceso. Pasouse dunha plataforma de só lectura a unha onde os propietarios xa poden xestionar os seus aloxamentos.
+- Estableceuse a lóxica de protección de rutas baseada en roles (autenticación) e a base do panel de control para o administrador.
 ### Innovación: 
-
-## Prototipo 4
-### Data de entrega: 
-### Funcionalidades implementadas:
-### Observacións: 
-### Innovación: 
+- Implementación de seguridade baseada en roles e control de acceso á información sensible (ocultación de teléfonos a usuarios non rexistrados).
 
 ## Prototipo Final
-### Data de entrega: 
+### Data de entrega: 02/06/2026
 ### Funcionalidades implementadas:
+- Sistema de busca de aloxamentos con filtros (prezo, localización, duración da estancia, características, etc).
+- Sistema de valoracións e comentarios dos estudantes sobre os aloxamentos.
+- Extensión do panel de administración para moderar comentarios e xestionar imaxes.
+- Posibilidade de bloquear ou eliminar usuarios por parte dos administradores.
+- Sistema básico de reportes de anuncios ou usuarios sospeitosos.
 ### Observacións: 
+- Esta última iteración estivo enfocada en dúas áreas: dotar ao estudante de ferramentas de busca eficientes (filtros) e garantir a fiabilidade da plataforma.
+- Ao descartar a mensaxería interna para manter a simplicidade, o sistema de valoracións e o bloqueo de usuarios por parte do administrador convértense nas principais defensas contra anuncios enganosos e estafas, cumprindo o obxectivo do proxecto.
 ### Innovación: 
+- Construción dun sistema de filtros dinámico e un fluxo completo de moderación (reportes, bloqueos e control de calidade de comentarios), garantindo unha contorna fiable que se diferenza dos grupos sen moderación das redes sociais.
 
 
 
