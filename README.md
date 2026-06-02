@@ -16,18 +16,20 @@ git clone https://gitlab.iessanclemente.net/dawo/a25tomascc.git
 cd a25tomascc
 
 # 2. Copiar e configurar as variables de entorno
-cp .env.example .env
+# Configurar o backend
+cp backend/.env.example backend/.env
+# Configurar o frontend (se tes variables no frontend)
+cp frontend/.env.example frontend/.env
 
 # 3. Levantar os contedores
 docker-compose up --build
-```
 
 A aplicación creará automaticamente a base de datos e cargara os datos iniciais de proba.
 
 **Credenciais de proba:**
 - Admin: `admin` / `admin1234`
-- Propietario: `propietario1` / `test1234`
-- Estudante: `estudante1` / `test1234`
+- Propietario: `owner1` / `owner1234`
+- Estudante: `student1` / `student1234`
 
 ## Uso
 
