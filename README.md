@@ -23,6 +23,7 @@ cp frontend/.env.example frontend/.env
 
 # 3. Levantar os contedores
 docker-compose up --build
+```
 
 A aplicación creará automaticamente a base de datos e cargara os datos iniciais de proba.
 
@@ -43,7 +44,7 @@ Unha vez levantados os contedores, accede á aplicación nos seguintes enderezos
 
 Són Tomás Cebeiro Cabo, estudante do ciclo superior de Desenvolvemento de Aplicacións Web (DAW) no IES San Clemente. Teño experiencia práctica en desenvolvemento web con WordPress, Django e Vue.js, xestión de comunidades online e creación de contido dixital. Decanteíme por este proxecto porque coñezo de primeira man o problema que resolve: pasei por esa situación buscando aloxamento en Malta e quixen darlle unha solución real a outros estudantes.
 
-Contacto: a25tomascc@iessanclemente.net
+Contacto: [a25tomascc@iessanclemente.net](mailto:a25tomascc@iessanclemente.net)
 
 ## Licencia
 
