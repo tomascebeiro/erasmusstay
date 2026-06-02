@@ -1,11 +1,23 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://erasmusstay-production.up.railway.app'
+/**
+ * Vista de inicio de sesión.
+ *
+ * Responsabilidades:
+ * - Recoger usuario y contraseña.
+ * - Enviar credenciales al backend.
+ * - Guardar el token y los datos del usuario autenticado.
+ * - Redirigir al usuario a la ruta original o al inicio.
+ */
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const router = useRouter()
+const route = useRoute()
+
 const { login } = useAuth()
 
 const username = ref('')
@@ -13,11 +25,14 @@ const password = ref('')
 const loading = ref(false)
 const error = ref('')
 
+/**
+ * Envía las credenciales al backend y gestiona la respuesta.
+ */
 const handleSubmit = async () => {
   error.value = ''
 
   if (!username.value || !password.value) {
-    error.value = 'Please enter your username and password.'
+    error.value = 'Introduce tu usuario y contraseña.'
     return
   }
 
@@ -36,6 +51,7 @@ const handleSubmit = async () => {
     })
 
     let data = {}
+
     try {
       data = await response.json()
     } catch {
@@ -47,26 +63,35 @@ const handleSubmit = async () => {
         data.detail ||
         data.error ||
         data.non_field_errors?.[0] ||
-        'Invalid login credentials.'
+        'Las credenciales introducidas no son válidas.'
       )
     }
 
     const token = data.token
 
     if (!token) {
-      throw new Error('Authentication failed while processing the security token.')
+      throw new Error('No se pudo procesar el token de seguridad.')
     }
 
+    /**
+     * Guardamos sesión en el composable global de autenticación.
+     * Si el backend no devuelve user completo, se mantiene una estructura mínima.
+     */
     login(token, data.user || {
       id: data.user?.id,
       username: username.value,
       email: data.user?.email || '',
       rol: data.user?.rol || 'estudiante',
+      telefono: data.user?.telefono || '',
     })
 
-    router.push('/')
+    /**
+     * Si el usuario intentaba acceder a una ruta protegida,
+     * vuelve a esa ruta. Si no, va al inicio.
+     */
+    router.push(route.query.redirect || '/')
   } catch (err) {
-    error.value = err.message || 'System error during login.'
+    error.value = err.message || 'Se produjo un error al iniciar sesión.'
   } finally {
     loading.value = false
   }
@@ -74,81 +99,84 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <main class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-slate-50">
-    <div class="bg-white border border-slate-200 rounded-lg p-6 md:p-8 max-w-md w-full shadow-sm">
-      
+  <main class="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-slate-50 px-4 py-12">
+    <div class="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm md:p-8">
       <div class="mb-6 text-center">
-        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">
-          Welcome back
+        <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">
+          Iniciar sesión
         </h1>
-        <p class="text-sm text-slate-500 mt-2">
-          Sign in to ErasmusStay to manage your accommodations.
+
+        <p class="mt-2 text-sm text-slate-500">
+          Accede a ErasmusStay para gestionar tus alojamientos, solicitudes y valoraciones.
         </p>
       </div>
 
       <form class="space-y-4" @submit.prevent="handleSubmit">
         <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">
-            Username
+          <label class="mb-2 block text-xs font-semibold uppercase text-slate-500">
+            Usuario
           </label>
+
           <input
             v-model="username"
             type="text"
             autocomplete="username"
-            placeholder="Your username"
+            placeholder="Tu nombre de usuario"
             required
-            class="w-full border border-slate-300 rounded px-3 py-2 text-sm text-slate-700 focus:outline-none focus:border-slate-900 disabled:opacity-50"
+            class="w-full rounded border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-slate-900 focus:outline-none disabled:opacity-50"
             :disabled="loading"
-          />
+          >
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">
-            Password
+          <label class="mb-2 block text-xs font-semibold uppercase text-slate-500">
+            Contraseña
           </label>
+
           <input
             v-model="password"
             type="password"
             autocomplete="current-password"
             placeholder="••••••••"
             required
-            class="w-full border border-slate-300 rounded px-3 py-2 text-sm text-slate-700 focus:outline-none focus:border-slate-900 disabled:opacity-50"
+            class="w-full rounded border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-slate-900 focus:outline-none disabled:opacity-50"
             :disabled="loading"
-          />
+          >
         </div>
 
         <div
           v-if="error"
-          class="bg-red-50 border border-red-200 text-red-600 rounded p-3 text-xs"
+          class="rounded border border-red-200 bg-red-50 p-3 text-xs text-red-600"
         >
           {{ error }}
         </div>
 
         <button
           type="submit"
-          class="w-full bg-slate-900 text-white text-sm font-bold py-2.5 rounded hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+          class="mt-2 w-full rounded bg-slate-900 py-2.5 text-sm font-bold text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
           :disabled="loading"
         >
-          {{ loading ? 'Verifying credentials...' : 'Sign in' }}
+          {{ loading ? 'Comprobando credenciales...' : 'Entrar' }}
         </button>
       </form>
 
-      <div class="mt-6 pt-6 border-t border-slate-200 flex flex-col gap-2 text-center">
+      <div class="mt-6 flex flex-col gap-2 border-t border-slate-200 pt-6 text-center">
         <p class="text-sm text-slate-500">
-          Don't have an account yet? 
+          ¿Todavía no tienes cuenta?
+
           <router-link
             to="/register"
-            class="text-blue-600 hover:text-blue-700 font-bold transition-colors ml-1"
+            class="ml-1 font-bold text-blue-600 transition-colors hover:text-blue-700"
           >
-            Register here
+            Regístrate aquí
           </router-link>
         </p>
-        
+
         <router-link
           to="/"
-          class="text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors mt-4 block"
+          class="mt-4 block text-sm font-medium text-slate-400 transition-colors hover:text-slate-600"
         >
-          ← Back to listings
+          ← Volver al inicio
         </router-link>
       </div>
     </div>

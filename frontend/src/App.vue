@@ -1,70 +1,109 @@
 <script setup>
-import { onMounted } from 'vue'
 import Navigation from './components/Navigation.vue'
-import { useAuth } from './composables/useAuth'
 
-const { restoreSession } = useAuth()
-
-onMounted(() => {
-  restoreSession()
-})
+/**
+ * Componente raíz de la aplicación.
+ *
+ * Responsabilidades:
+ * - Mostrar la barra de navegación global.
+ * - Renderizar la vista correspondiente mediante Vue Router.
+ * - Mostrar un pie de página común en toda la aplicación.
+ */
 </script>
 
 <template>
-  <div class="min-h-screen bg-white text-slate-900 flex flex-col font-sans">
-    
+  <div class="min-h-screen bg-slate-50 text-slate-900">
     <Navigation />
 
-    <main class="flex-1 w-full bg-[#f8fafc]">
-      <router-view />
-    </main>
+    <router-view />
 
-    <footer class="bg-slate-50 border-t border-slate-200 text-slate-600 py-12">
-      <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div class="md:col-span-1">
-          <span class="font-bold text-lg text-slate-900 flex items-center gap-2">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 12h3v8h14v-8h3L12 2zm0 2.83l5 5V18H7v-8.17l5-5z"/></svg>
-            ERASMUSSTAY
-          </span>
-          <p class="text-sm mt-4 text-slate-500">
-            Trusted accommodation platform for Erasmus students across Europe.
+    <footer class="border-t border-slate-200 bg-white">
+      <div class="mx-auto grid max-w-7xl gap-8 px-4 py-10 md:grid-cols-4">
+        <div class="md:col-span-2">
+          <router-link to="/" class="text-xl font-black tracking-tight text-slate-900">
+            Erasmus<span class="text-slate-600">Stay</span>
+          </router-link>
+
+          <p class="mt-3 max-w-md text-sm leading-6 text-slate-500">
+            Plataforma web para facilitar la búsqueda de alojamiento temporal a estudiantes Erasmus en Malta.
           </p>
         </div>
 
         <div>
-          <h4 class="font-semibold text-slate-900 mb-4">Platform</h4>
-          <ul class="space-y-2 text-sm">
-            <li><router-link to="/anuncios" class="hover:text-blue-600">Search Rooms</router-link></li>
-            <li><router-link to="/crear-anuncio" class="hover:text-blue-600">List Your Property</router-link></li>
-            <li><a href="#" class="hover:text-blue-600">Safety & Trust</a></li>
-            <li><router-link to="/contacto" class="hover:text-blue-600">Help Center</router-link></li>
+          <h2 class="text-sm font-black uppercase tracking-wide text-slate-900">
+            Plataforma
+          </h2>
+
+          <ul class="mt-4 space-y-2 text-sm text-slate-500">
+            <li>
+              <router-link to="/" class="hover:text-blue-600">
+                Inicio
+              </router-link>
+            </li>
+
+            <li>
+              <router-link to="/anuncios" class="hover:text-blue-600">
+                Buscar alojamientos
+              </router-link>
+            </li>
+
+            <li>
+              <router-link to="/crear-anuncio" class="hover:text-blue-600">
+                Publicar anuncio
+              </router-link>
+            </li>
+
+            <li>
+              <router-link to="/mis-anuncios" class="hover:text-blue-600">
+                Mis anuncios
+              </router-link>
+            </li>
           </ul>
         </div>
 
         <div>
-          <h4 class="font-semibold text-slate-900 mb-4">Company</h4>
-          <ul class="space-y-2 text-sm">
-            <li><a href="#" class="hover:text-blue-600">About Us</a></li>
-            <li><a href="#" class="hover:text-blue-600">Careers</a></li>
-            <li><a href="#" class="hover:text-blue-600">Press</a></li>
-            <li><router-link to="/contacto" class="hover:text-blue-600">Contact</router-link></li>
-          </ul>
-        </div>
+          <h2 class="text-sm font-black uppercase tracking-wide text-slate-900">
+            Cuenta
+          </h2>
 
-        <div>
-          <h4 class="font-semibold text-slate-900 mb-4">Legal</h4>
-          <ul class="space-y-2 text-sm">
-            <li><a href="#" class="hover:text-blue-600">Privacy Policy</a></li>
-            <li><a href="#" class="hover:text-blue-600">Terms of Service</a></li>
-            <li><a href="#" class="hover:text-blue-600">Cookie Policy</a></li>
+          <ul class="mt-4 space-y-2 text-sm text-slate-500">
+            <li>
+              <router-link to="/login" class="hover:text-blue-600">
+                Iniciar sesión
+              </router-link>
+            </li>
+
+            <li>
+              <router-link to="/register" class="hover:text-blue-600">
+                Crear cuenta
+              </router-link>
+            </li>
+
+            <li>
+              <router-link to="/profile" class="hover:text-blue-600">
+                Mi perfil
+              </router-link>
+            </li>
+
+            <li>
+              <router-link to="/contacto" class="hover:text-blue-600">
+                Solicitudes de contacto
+              </router-link>
+            </li>
           </ul>
         </div>
       </div>
 
-      <div class="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between">
-        <p class="text-xs text-slate-500">
-          &copy; 2026 ErasmusStay Platform. All rights reserved.
-        </p>
+      <div class="border-t border-slate-100 py-4">
+        <div class="mx-auto flex max-w-7xl flex-col gap-2 px-4 text-sm text-slate-400 md:flex-row md:items-center md:justify-between">
+          <p>
+            © 2026 ErasmusStay. Proyecto de fin de ciclo DAW.
+          </p>
+
+          <p>
+            Desarrollado con Django, Django REST Framework y Vue.
+          </p>
+        </div>
       </div>
     </footer>
   </div>

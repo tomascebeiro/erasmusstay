@@ -23,7 +23,7 @@ A aplicación ofrecerá, de forma xeral, as seguintes funcionalidades:
    - Os administradores poderán revisar, aprobar ou eliminar anuncios. 
 
 3. **Sistema de busca avanzada de aloxamentos**:
-   - Filtros personalizables: busca por cidade, tipo de vivenda, prezo, duración da estancia, e outros parámetros (Se ten internet, terraza, garage etc).
+   - Filtros personalizables: busca por cidade, tipo de vivenda, prezo, duración da estancia, e outros parámetros (Se ten internet, terraza, garaxe etc).
    - Resultados detallados: visualización de anuncios con imaxes e descricións detalladas.
 
 4. **Sistema de contacto entre estudantes e propietarios**:

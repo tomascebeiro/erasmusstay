@@ -1,10 +1,10 @@
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 
 const user = ref(null)
 const isAuthenticated = ref(false)
 const loadingAuth = ref(false)
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://erasmusstay-production.up.railway.app'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 export function useAuth() {
   const token = computed(() => localStorage.getItem('token'))
@@ -70,6 +70,13 @@ export function useAuth() {
     }
   }
 
+  const updateLocalUser = (newUserData) => {
+    user.value = {
+      ...(user.value || {}),
+      ...newUserData,
+    }
+  }
+
   return {
     user,
     isAuthenticated,
@@ -79,5 +86,6 @@ export function useAuth() {
     login,
     logout,
     getAuthHeaders,
+    updateLocalUser,
   }
 }

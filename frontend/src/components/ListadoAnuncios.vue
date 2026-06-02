@@ -1,300 +1,470 @@
 <script setup>
-import { onMounted, ref, computed, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://erasmusstay-production.up.railway.app'
+/**
+ * Listado público de anuncios.
+ *
+ * Permite:
+ * - listar alojamientos aprobados;
+ * - filtrar por ubicación, tipo, precio y servicios;
+ * - mostrar imágenes reales;
+ * - permitir editar o eliminar anuncios si el usuario es propietario del anuncio;
+ * - permitir administrar anuncios si el usuario es administrador.
+ */
 
-// Instancias y rutas
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
 const route = useRoute()
-const { user, isAuthenticated } = useAuth()
+const { user, getAuthHeaders, isAuthenticated } = useAuth()
 
 const anuncios = ref([])
-const loading = ref(false)
+const cargando = ref(false)
 const error = ref('')
+const mensajeExito = ref('')
 
-const currentPage = ref(1)
-const totalPages = ref(1)
-const nextUrl = ref(null)
-const previousUrl = ref(null)
-
-// Filtros inicializados con soporte para query params de la URL
-const filters = ref({
-  search: route.query.localizacion || '',
-  tipo_vivienda: '',
-  precioMin: '',
-  precioMax: route.query.precio_max || '',
+const filtros = ref({
+  busqueda: route.query.localizacion || '',
+  tipo_vivienda: route.query.tipo_vivienda || '',
+  precio_min: route.query.precio_min || '',
+  precio_max: route.query.precio_max || route.query.maxPrice || '',
   wifi: route.query.wifi === 'true',
   terraza: route.query.terraza === 'true',
   garaje: route.query.garaje === 'true',
-  duracion: '' // Placeholder visual para seguir el wireframe
 })
 
-const anunciosFiltrados = computed(() => {
-  if (user.value?.rol === 'administrador') return anuncios.value
-  return anuncios.value.filter(anuncio => anuncio.aprobado && anuncio.publicado)
+/**
+ * Normaliza una respuesta paginada o una lista directa.
+ */
+const normalizarLista = (data) => {
+  return Array.isArray(data) ? data : (data.results || [])
+}
+
+const rol = computed(() => {
+  return (user.value?.rol || '').toLowerCase()
 })
 
-const buildQuery = () => {
+const esPropietario = computed(() => {
+  return rol.value === 'propietario'
+})
+
+const esAdmin = computed(() => {
+  return rol.value === 'administrador' || user.value?.username === 'admin'
+})
+
+/**
+ * Comprueba si el usuario puede gestionar un anuncio concreto.
+ */
+const puedeGestionar = (anuncio) => {
+  if (!isAuthenticated.value) return false
+  if (esAdmin.value) return true
+
+  return esPropietario.value && anuncio.propietario === user.value?.id
+}
+
+/**
+ * Obtiene la primera imagen disponible del anuncio.
+ */
+const obtenerImagen = (anuncio) => {
+  const primera = anuncio.imagenes?.[0]
+
+  if (!primera) {
+    return ''
+  }
+
+  return primera.url || primera.imagen || primera.imagen_url || ''
+}
+
+/**
+ * Construye la query de filtros para el backend.
+ */
+const construirQuery = () => {
   const params = new URLSearchParams()
-  if (filters.value.search) params.append('localizacion', filters.value.search)
-  if (filters.value.tipo_vivienda) params.append('tipo_vivienda', filters.value.tipo_vivienda)
-  if (filters.value.precioMin) params.append('precio_min', filters.value.precioMin)
-  if (filters.value.precioMax) params.append('precio_max', filters.value.precioMax)
-  if (filters.value.wifi) params.append('wifi', 'true')
-  if (filters.value.terraza) params.append('terraza', 'true')
-  if (filters.value.garaje) params.append('garaje', 'true')
-  params.append('page', currentPage.value)
+
+  if (filtros.value.busqueda) {
+    params.append('localizacion', filtros.value.busqueda)
+  }
+
+  if (filtros.value.tipo_vivienda) {
+    params.append('tipo_vivienda', filtros.value.tipo_vivienda)
+  }
+
+  if (filtros.value.precio_min) {
+    params.append('precio_min', filtros.value.precio_min)
+  }
+
+  if (filtros.value.precio_max) {
+    params.append('precio_max', filtros.value.precio_max)
+  }
+
+  if (filtros.value.wifi) {
+    params.append('wifi', 'true')
+  }
+
+  if (filtros.value.terraza) {
+    params.append('terraza', 'true')
+  }
+
+  if (filtros.value.garaje) {
+    params.append('garaje', 'true')
+  }
+
   return params.toString()
 }
 
-const fetchAnuncios = async (url = null) => {
-  loading.value = true
+/**
+ * Carga los anuncios desde la API.
+ */
+const cargarAnuncios = async () => {
+  cargando.value = true
   error.value = ''
 
   try {
-    const endpoint = url || `${API_URL}/api/anuncios/?${buildQuery()}`
-    const response = await fetch(endpoint)
-    if (!response.ok) throw new Error('No se pudieron cargar los alojamientos disponibles')
+    const query = construirQuery()
+    const url = query ? `${API_URL}/api/anuncios/?${query}` : `${API_URL}/api/anuncios/`
 
-    const data = await response.json()
-    anuncios.value = data.results || data
-    nextUrl.value = data.next || null
-    previousUrl.value = data.previous || null
+    const response = await fetch(url, {
+      headers: {
+        ...getAuthHeaders(),
+      },
+    })
 
-    totalPages.value = data.count ? Math.ceil(data.count / 10) : 1
+    const data = await response.json().catch(() => ({}))
+
+    if (!response.ok) {
+      throw new Error(data.detail || data.error || 'No se pudieron cargar los anuncios.')
+    }
+
+    anuncios.value = normalizarLista(data)
   } catch (err) {
     error.value = err.message
   } finally {
-    loading.value = false
+    cargando.value = false
   }
 }
 
-// Watcher para aplicar los filtros automáticamente como en el wireframe
-watch(filters, () => {
-  currentPage.value = 1
-  fetchAnuncios()
-}, { deep: true })
+/**
+ * Elimina un anuncio si el usuario tiene permisos.
+ */
+const eliminarAnuncio = async (anuncio) => {
+  if (!confirm(`¿Seguro que quieres eliminar el anuncio "${anuncio.titulo}"?`)) {
+    return
+  }
 
-const clearFilters = () => {
-  filters.value = {
-    search: '',
+  error.value = ''
+  mensajeExito.value = ''
+
+  try {
+    const response = await fetch(`${API_URL}/api/anuncios/${anuncio.id}/`, {
+      method: 'DELETE',
+      headers: {
+        ...getAuthHeaders(),
+      },
+    })
+
+    if (!response.ok && response.status !== 204) {
+      const data = await response.json().catch(() => ({}))
+      throw new Error(data.detail || data.error || 'No se pudo eliminar el anuncio.')
+    }
+
+    mensajeExito.value = 'Anuncio eliminado correctamente.'
+    await cargarAnuncios()
+  } catch (err) {
+    error.value = err.message
+  }
+}
+
+/**
+ * Limpia todos los filtros.
+ */
+const limpiarFiltros = () => {
+  filtros.value = {
+    busqueda: '',
     tipo_vivienda: '',
-    precioMin: '',
-    precioMax: '',
+    precio_min: '',
+    precio_max: '',
     wifi: false,
     terraza: false,
     garaje: false,
-    duracion: ''
   }
-}
 
-const goNext = () => {
-  if (!nextUrl.value) return
-  currentPage.value += 1
-  fetchAnuncios(nextUrl.value)
-}
-
-const goPrevious = () => {
-  if (!previousUrl.value) return
-  currentPage.value -= 1
-  fetchAnuncios(previousUrl.value)
+  cargarAnuncios()
 }
 
 onMounted(() => {
-  fetchAnuncios()
+  cargarAnuncios()
 })
 </script>
 
 <template>
-  <main class="max-w-7xl mx-auto px-4 py-8 md:py-12">
-    
-    <div class="flex flex-col md:flex-row gap-8 items-start">
-      
-      <aside class="w-full md:w-64 flex-shrink-0 bg-white rounded border border-slate-200 p-6 md:sticky md:top-24">
-        
-        <div class="mb-8">
-          <h3 class="text-sm font-bold text-slate-900 mb-4">Price Range</h3>
-          <div class="flex items-center justify-between gap-2">
-            <input 
-              v-model="filters.precioMin" 
-              type="number" 
-              placeholder="Min €" 
-              class="w-1/2 border border-slate-300 rounded px-2 py-1.5 text-xs text-slate-700 focus:outline-none focus:border-slate-500"
-            />
-            <span class="text-slate-400">-</span>
-            <input 
-              v-model="filters.precioMax" 
-              type="number" 
-              placeholder="Max €" 
-              class="w-1/2 border border-slate-300 rounded px-2 py-1.5 text-xs text-slate-700 focus:outline-none focus:border-slate-500"
-            />
-          </div>
+  <main class="min-h-screen bg-slate-50 py-10">
+    <div class="mx-auto max-w-7xl px-4">
+      <!-- Cabecera -->
+      <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="text-sm font-bold uppercase tracking-wide text-blue-700">
+            Alojamientos
+          </p>
+
+          <h1 class="mt-2 text-2xl font-black text-slate-900 md:text-4xl">
+            Alojamientos disponibles
+          </h1>
+
+          <p class="mt-2 text-slate-500">
+            Mostrando {{ anuncios.length }} resultados.
+          </p>
         </div>
 
-        <div class="mb-8">
-          <h3 class="text-sm font-bold text-slate-900 mb-4">Property Type</h3>
-          <div class="space-y-3">
-            <label class="flex items-center gap-3 cursor-pointer">
-              <input type="radio" v-model="filters.tipo_vivienda" value="habitacion" class="w-4 h-4 text-slate-900 border-slate-300 focus:ring-slate-900" />
-              <span class="text-sm text-slate-700">Room</span>
-            </label>
-            <label class="flex items-center gap-3 cursor-pointer">
-              <input type="radio" v-model="filters.tipo_vivienda" value="piso_completo" class="w-4 h-4 text-slate-900 border-slate-300 focus:ring-slate-900" />
-              <span class="text-sm text-slate-700">Full Flat</span>
-            </label>
-            <label class="flex items-center gap-3 cursor-pointer">
-              <input type="radio" v-model="filters.tipo_vivienda" value="estudio" class="w-4 h-4 text-slate-900 border-slate-300 focus:ring-slate-900" />
-              <span class="text-sm text-slate-700">Studio</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="mb-8">
-          <h3 class="text-sm font-bold text-slate-900 mb-4">Services</h3>
-          <div class="space-y-3">
-            <label class="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" v-model="filters.wifi" class="w-4 h-4 rounded text-slate-900 border-slate-300 focus:ring-slate-900" />
-              <span class="text-sm text-slate-700">Wifi</span>
-            </label>
-            <label class="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" v-model="filters.terraza" class="w-4 h-4 rounded text-slate-900 border-slate-300 focus:ring-slate-900" />
-              <span class="text-sm text-slate-700">Terrace</span>
-            </label>
-            <label class="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" v-model="filters.garaje" class="w-4 h-4 rounded text-slate-900 border-slate-300 focus:ring-slate-900" />
-              <span class="text-sm text-slate-700">Garage</span>
-            </label>
-          </div>
-        </div>
-
-        <button 
-          @click="clearFilters"
-          class="w-full bg-slate-100 text-slate-700 text-xs font-bold py-2.5 rounded hover:bg-slate-200 transition"
+        <router-link
+          v-if="esPropietario || esAdmin"
+          to="/crear-anuncio"
+          class="rounded bg-slate-900 px-5 py-3 font-bold text-white hover:bg-slate-700"
         >
-          Clear All Filters
-        </button>
-      </aside>
+          Publicar anuncio
+        </router-link>
+      </div>
 
-      <section class="flex-1 w-full">
-        
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div>
-            <h1 class="text-2xl font-bold text-slate-900">
-              Available Housing <span v-if="filters.search">in {{ filters.search }}</span>
-            </h1>
-            <p class="text-sm text-slate-500 mt-1">
-              Showing {{ anunciosFiltrados.length }} results for your search
-            </p>
-          </div>
-          
-          <div class="w-full sm:w-48 relative">
-            <input 
-              v-model="filters.search"
-              type="text" 
-              placeholder="Search by location..." 
-              class="w-full border border-slate-300 rounded pl-4 pr-10 py-2 text-sm text-slate-700 focus:outline-none focus:border-blue-500"
-            />
-            <div class="absolute right-3 top-2.5 text-slate-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+      <!-- Mensajes -->
+      <div
+        v-if="error"
+        class="mb-6 rounded border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+      >
+        {{ error }}
+      </div>
+
+      <div
+        v-if="mensajeExito"
+        class="mb-6 rounded border border-green-200 bg-green-50 p-4 text-sm text-green-700"
+      >
+        {{ mensajeExito }}
+      </div>
+
+      <div class="grid gap-8 lg:grid-cols-[260px_1fr]">
+        <!-- Filtros -->
+        <aside class="h-fit rounded border border-slate-200 bg-white p-5">
+          <h2 class="mb-5 font-black text-slate-900">
+            Filtros
+          </h2>
+
+          <div class="space-y-5">
+            <div>
+              <label class="mb-2 block text-sm font-bold text-slate-700">
+                Ubicación
+              </label>
+
+              <input
+                v-model="filtros.busqueda"
+                type="text"
+                placeholder="Buscar por ubicación..."
+                class="w-full rounded border border-slate-300 px-4 py-2 text-sm"
+              >
             </div>
-          </div>
-        </div>
 
-        <div v-if="loading" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div v-for="i in 4" :key="i" class="border border-slate-200 rounded animate-pulse">
-            <div class="h-48 bg-slate-200"></div>
-            <div class="p-5">
-              <div class="h-4 bg-slate-200 w-1/4 mb-3"></div>
-              <div class="h-5 bg-slate-200 w-3/4 mb-2"></div>
-              <div class="h-4 bg-slate-200 w-1/2 mb-6"></div>
-              <div class="flex justify-between">
-                <div class="h-6 bg-slate-200 w-1/3"></div>
-                <div class="h-8 bg-slate-200 w-1/4 rounded"></div>
+            <div>
+              <label class="mb-2 block text-sm font-bold text-slate-700">
+                Tipo de vivienda
+              </label>
+
+              <select
+                v-model="filtros.tipo_vivienda"
+                class="w-full rounded border border-slate-300 px-4 py-2 text-sm"
+              >
+                <option value="">Todos</option>
+                <option value="habitacion">Habitación</option>
+                <option value="piso_completo">Piso completo</option>
+                <option value="estudio">Estudio</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="mb-2 block text-sm font-bold text-slate-700">
+                Precio mínimo
+              </label>
+
+              <input
+                v-model="filtros.precio_min"
+                type="number"
+                class="w-full rounded border border-slate-300 px-4 py-2 text-sm"
+              >
+            </div>
+
+            <div>
+              <label class="mb-2 block text-sm font-bold text-slate-700">
+                Precio máximo
+              </label>
+
+              <input
+                v-model="filtros.precio_max"
+                type="number"
+                class="w-full rounded border border-slate-300 px-4 py-2 text-sm"
+              >
+            </div>
+
+            <div class="space-y-3">
+              <label class="flex cursor-pointer items-center gap-3">
+                <input v-model="filtros.wifi" type="checkbox">
+                <span class="text-sm text-slate-700">WiFi</span>
+              </label>
+
+              <label class="flex cursor-pointer items-center gap-3">
+                <input v-model="filtros.terraza" type="checkbox">
+                <span class="text-sm text-slate-700">Terraza</span>
+              </label>
+
+              <label class="flex cursor-pointer items-center gap-3">
+                <input v-model="filtros.garaje" type="checkbox">
+                <span class="text-sm text-slate-700">Garaje</span>
+              </label>
+            </div>
+
+            <button
+              type="button"
+              class="w-full rounded bg-slate-900 py-2.5 font-bold text-white"
+              @click="cargarAnuncios"
+            >
+              Aplicar filtros
+            </button>
+
+            <button
+              type="button"
+              class="w-full rounded bg-slate-100 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-200"
+              @click="limpiarFiltros"
+            >
+              Limpiar filtros
+            </button>
+          </div>
+        </aside>
+
+        <!-- Resultados -->
+        <section>
+          <div
+            v-if="cargando"
+            class="grid grid-cols-1 gap-6 lg:grid-cols-2"
+          >
+            <div
+              v-for="i in 4"
+              :key="i"
+              class="animate-pulse rounded border border-slate-200 bg-white"
+            >
+              <div class="h-48 bg-slate-200"></div>
+
+              <div class="p-5">
+                <div class="mb-3 h-4 w-1/4 bg-slate-200"></div>
+                <div class="mb-2 h-5 w-3/4 bg-slate-200"></div>
+                <div class="mb-6 h-4 w-1/2 bg-slate-200"></div>
+
+                <div class="flex justify-between">
+                  <div class="h-6 w-1/3 bg-slate-200"></div>
+                  <div class="h-8 w-1/4 rounded bg-slate-200"></div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div v-else-if="error" class="bg-red-50 text-red-600 p-4 rounded border border-red-200 text-sm">
-          {{ error }}
-        </div>
-
-        <div v-else-if="anunciosFiltrados.length" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <article 
-            v-for="anuncio in anunciosFiltrados" 
-            :key="anuncio.id"
-            class="bg-white border border-slate-200 rounded overflow-hidden flex flex-col"
+          <div
+            v-else-if="anuncios.length"
+            class="grid grid-cols-1 gap-6 lg:grid-cols-2"
           >
-            <div class="h-48 bg-[#e5e7eb] flex items-center justify-center">
-              <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            </div>
+            <article
+              v-for="anuncio in anuncios"
+              :key="anuncio.id"
+              class="flex flex-col overflow-hidden rounded border border-slate-200 bg-white"
+            >
+              <div class="h-48 bg-slate-200">
+                <img
+                  v-if="obtenerImagen(anuncio)"
+                  :src="obtenerImagen(anuncio)"
+                  :alt="anuncio.titulo"
+                  class="h-full w-full object-cover"
+                >
 
-            <div class="p-5 flex-1 flex flex-col justify-between">
-              <div>
-                <div class="flex items-center justify-between mb-2">
-                  <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded">
-                    {{ (anuncio.tipo_vivienda || '').replace('_', ' ') }}
-                  </span>
-                  <div class="flex items-center gap-1 text-sm font-bold text-slate-800">
-                    <span class="text-slate-900">★</span> 
-                    {{ anuncio.valoraciones?.length ? (anuncio.valoraciones.reduce((acc, val) => acc + val.puntuacion, 0) / anuncio.valoraciones.length).toFixed(1) : 'Nuevo' }}
+                <div
+                  v-else
+                  class="flex h-full w-full items-center justify-center text-slate-400"
+                >
+                  Sin imagen disponible
+                </div>
+              </div>
+
+              <div class="flex flex-1 flex-col justify-between p-5">
+                <div>
+                  <div class="mb-2 flex items-center justify-between">
+                    <span class="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                      {{ (anuncio.tipo_vivienda || '').replace('_', ' ') }}
+                    </span>
+
+                    <span
+                      v-if="puedeGestionar(anuncio)"
+                      class="rounded px-2 py-0.5 text-[10px] font-bold uppercase"
+                      :class="anuncio.aprobado ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'"
+                    >
+                      {{ anuncio.aprobado ? 'Aprobado' : 'Pendiente' }}
+                    </span>
+                  </div>
+
+                  <h3 class="mb-1 line-clamp-1 text-lg font-bold text-slate-900">
+                    {{ anuncio.titulo }}
+                  </h3>
+
+                  <p class="mb-5 text-xs text-slate-500">
+                    {{ anuncio.localizacion }}
+                  </p>
+                </div>
+
+                <div class="mt-auto border-t border-slate-100 pt-4">
+                  <div class="flex items-center justify-between">
+                    <p class="text-xl font-bold text-slate-900">
+                      {{ anuncio.precio_mes }}€
+                      <span class="text-xs font-normal text-slate-500">/mes</span>
+                    </p>
+
+                    <router-link
+                      :to="`/anuncio/${anuncio.id}`"
+                      class="rounded bg-slate-100 px-4 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-200"
+                    >
+                      Ver detalle
+                    </router-link>
+                  </div>
+
+                  <div
+                    v-if="puedeGestionar(anuncio)"
+                    class="mt-4 flex items-center justify-end gap-3"
+                  >
+                    <router-link
+                      :to="{ name: 'editar-anuncio', params: { id: anuncio.id } }"
+                      class="text-xs font-bold text-blue-700 hover:text-blue-900"
+                    >
+                      Editar
+                    </router-link>
+
+                    <button
+                      type="button"
+                      class="text-xs font-bold text-red-700 hover:text-red-900"
+                      @click="eliminarAnuncio(anuncio)"
+                    >
+                      Eliminar
+                    </button>
                   </div>
                 </div>
-                
-                <h3 class="text-lg font-bold text-slate-900 mb-1 line-clamp-1">{{ anuncio.titulo }}</h3>
-                <p class="text-xs text-slate-500 flex items-center gap-1 mb-5">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                  {{ anuncio.localizacion }}
-                </p>
               </div>
+            </article>
+          </div>
 
-              <div class="flex items-center justify-between border-t border-slate-100 pt-4 mt-auto">
-                <p class="text-xl font-bold text-slate-900">
-                  {{ anuncio.precio_mes }}€ <span class="text-xs font-normal text-slate-500">/month</span>
-                </p>
-                <router-link 
-                  :to="`/anuncio/${anuncio.id}`"
-                  class="bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold py-2 px-4 rounded transition"
-                >
-                  View details
-                </router-link>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div v-else class="text-center py-20 bg-white border border-slate-200 rounded">
-          <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          <h3 class="text-lg font-bold text-slate-700">No properties found</h3>
-          <p class="text-sm text-slate-500 mt-1">Try adjusting your search filters.</p>
-        </div>
-
-        <div v-if="totalPages > 1" class="flex justify-center items-center gap-2 mt-10">
-          <button 
-            @click="goPrevious" 
-            :disabled="!previousUrl"
-            class="w-8 h-8 flex items-center justify-center rounded border border-slate-300 text-slate-600 disabled:opacity-30 transition hover:bg-slate-50"
+          <div
+            v-else
+            class="rounded border border-slate-200 bg-white py-20 text-center"
           >
-            &lt;
-          </button>
-          
-          <span class="w-8 h-8 flex items-center justify-center rounded bg-slate-900 text-white font-medium text-sm">
-            {{ currentPage }}
-          </span>
-          <span class="text-slate-400 text-sm px-1">of</span>
-          <span class="text-slate-600 font-medium text-sm px-1">{{ totalPages }}</span>
+            <h3 class="text-lg font-bold text-slate-700">
+              No se han encontrado alojamientos
+            </h3>
 
-          <button 
-            @click="goNext" 
-            :disabled="!nextUrl"
-            class="w-8 h-8 flex items-center justify-center rounded border border-slate-300 text-slate-600 disabled:opacity-30 transition hover:bg-slate-50"
-          >
-            &gt;
-          </button>
-        </div>
-
-      </section>
+            <p class="mt-1 text-sm text-slate-500">
+              Prueba a modificar los filtros de búsqueda.
+            </p>
+          </div>
+        </section>
+      </div>
     </div>
   </main>
 </template>

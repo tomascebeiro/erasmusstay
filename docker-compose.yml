@@ -14,10 +14,7 @@ services:
     container_name: erasmusstay_backend
     restart: always
     volumes:
-      - ./backend/src/config:/app/config
-      - ./backend/src/housing:/app/housing
-      - ./backend/src/manage.py:/app/manage.py
-      - ./backend/src/create_data.py:/app/create_data.py
+      - ./backend/src:/app
     ports:
       - "8000:8000"
     env_file:

@@ -1,139 +1,134 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useAuth } from '../composables/useAuth'
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://erasmusstay-production.up.railway.app'
-const { user, getAuthHeaders, login } = useAuth()
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
+const { user, getAuthHeaders, updateLocalUser, restoreSession } = useAuth()
 
 const loading = ref(false)
+const saving = ref(false)
 const error = ref('')
 const success = ref('')
 
-// Variables vinculadas al modelo de Django (User + PerfilUsuario)
-const profileForm = ref({
+const form = ref({
   username: '',
   email: '',
-  rol: ''
+  rol: '',
+  telefono: '',
 })
 
-const fetchCurrentProfile = async () => {
+const loadProfile = async () => {
+  loading.value = true
+  error.value = ''
+
   try {
-    const response = await fetch(`${API_URL}/api/me/`, {
-      method: 'GET',
-      headers: getAuthHeaders()
-    })
-    if (response.ok) {
-      const data = await response.json()
-      profileForm.value.username = data.username || ''
-      profileForm.value.email = data.email || ''
-      profileForm.value.rol = data.rol || data.perfil?.rol || user.value?.rol || 'User'
-    }
+    await restoreSession()
+
+    form.value.username = user.value?.username || ''
+    form.value.email = user.value?.email || ''
+    form.value.rol = user.value?.rol || ''
+    form.value.telefono = user.value?.telefono || ''
   } catch (err) {
-    console.error("Failed to load user profile metadata:", err)
+    error.value = 'No se pudo cargar el perfil.'
+  } finally {
+    loading.value = false
   }
 }
 
-const handleUpdateProfile = async () => {
+const saveProfile = async () => {
+  saving.value = true
   error.value = ''
   success.value = ''
-  loading.value = true
 
   try {
     const response = await fetch(`${API_URL}/api/me/`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        ...getAuthHeaders()
+        ...getAuthHeaders(),
       },
       body: JSON.stringify({
-        email: profileForm.value.email
-      })
+        email: form.value.email,
+        telefono: form.value.telefono,
+      }),
     })
 
-    const data = await response.json()
+    const data = await response.json().catch(() => ({}))
 
     if (!response.ok) {
-      throw new Error(data.detail || data.email?.[0] || 'Could not update profile records.')
+      throw new Error(data.detail || 'No se pudo actualizar el perfil.')
     }
 
-    success.value = 'Your personal settings have been saved successfully.'
-    
-    // Actualizamos la sesión en el cliente (localStorage)
-    login(localStorage.getItem('token'), { ...user.value, email: profileForm.value.email })
+    updateLocalUser(data)
+    success.value = 'Perfil actualizado correctamente.'
   } catch (err) {
     error.value = err.message
   } finally {
-    loading.value = false
+    saving.value = false
   }
 }
 
 onMounted(() => {
-  if (user.value) {
-    profileForm.value.username = user.value.username || ''
-    profileForm.value.email = user.value.email || ''
-    profileForm.value.rol = user.value.rol || ''
-  }
-  fetchCurrentProfile()
+  loadProfile()
 })
 </script>
 
 <template>
-  <main class="max-w-xl mx-auto px-4 py-12">
-    <div class="mb-8">
-      <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Account Settings</h1>
-      <p class="text-sm text-slate-500 mt-2">Manage your core user credentials and profile records below.</p>
-    </div>
-
-    <form @submit.prevent="handleUpdateProfile" class="bg-white border border-slate-200 rounded-lg p-6 space-y-6 shadow-sm">
-      
-      <div>
-        <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Username</label>
-        <input 
-          v-model="profileForm.username" 
-          type="text" 
-          disabled 
-          class="w-full bg-slate-50 border border-slate-200 rounded px-3 py-2 text-sm text-slate-400 cursor-not-allowed outline-none" 
-        />
-        <p class="text-[11px] text-slate-400 mt-1">User identifiers cannot be modified once set during registration.</p>
+  <main class="bg-slate-50 min-h-screen py-10">
+    <div class="max-w-3xl mx-auto px-4">
+      <div class="mb-8">
+        <p class="text-sm font-bold text-blue-700 uppercase tracking-wide">Mi cuenta</p>
+        <h1 class="text-3xl md:text-4xl font-black text-slate-900 mt-2">
+          Perfil de usuario
+        </h1>
+        <p class="text-slate-600 mt-3">
+          Actualiza tus datos de contacto. Si eres propietario, este teléfono será el que se muestre en tus anuncios.
+        </p>
       </div>
 
-      <div>
-        <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Assigned Profile Type</label>
-        <div class="w-full bg-slate-50 border border-slate-200 rounded px-3 py-2 text-sm text-slate-500 font-medium capitalize select-none">
-          {{ profileForm.rol || 'Student' }}
+      <div v-if="loading" class="text-slate-500">
+        Cargando perfil...
+      </div>
+
+      <form v-else @submit.prevent="saveProfile" class="bg-white border border-slate-200 rounded-xl p-6 md:p-8 space-y-6">
+        <div v-if="error" class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 text-sm">
+          {{ error }}
         </div>
-      </div>
 
-      <div>
-        <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Email Address *</label>
-        <input 
-          v-model="profileForm.email" 
-          type="email" 
-          required
-          :disabled="loading"
-          placeholder="name@example.com"
-          class="w-full border border-slate-300 rounded px-3 py-2 text-sm text-slate-700 focus:outline-none focus:border-slate-900 disabled:opacity-50" 
-        />
-      </div>
+        <div v-if="success" class="bg-green-50 border border-green-200 text-green-700 rounded-lg p-4 text-sm">
+          {{ success }}
+        </div>
 
-      <div v-if="error" class="bg-red-50 border border-red-200 text-red-600 rounded p-3 text-xs">
-        {{ error }}
-      </div>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-2">Usuario</label>
+          <input v-model="form.username" disabled class="w-full border border-slate-200 bg-slate-100 rounded-lg px-4 py-3 text-slate-500">
+        </div>
 
-      <div v-if="success" class="bg-green-50 border border-green-200 text-green-700 rounded p-3 text-xs font-medium">
-        {{ success }}
-      </div>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-2">Rol</label>
+          <input v-model="form.rol" disabled class="w-full border border-slate-200 bg-slate-100 rounded-lg px-4 py-3 text-slate-500">
+        </div>
 
-      <div class="pt-4 border-t border-slate-100 text-right">
-        <button 
-          type="submit" 
-          :disabled="loading"
-          class="bg-slate-900 text-white text-sm font-medium px-5 py-2 rounded hover:bg-slate-800 transition disabled:opacity-50"
-        >
-          {{ loading ? 'Saving Records...' : 'Save Settings' }}
-        </button>
-      </div>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-2">Email</label>
+          <input v-model="form.email" type="email" class="w-full border border-slate-300 rounded-lg px-4 py-3">
+        </div>
 
-    </form>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-2">Teléfono</label>
+          <input v-model="form.telefono" type="tel" class="w-full border border-slate-300 rounded-lg px-4 py-3" placeholder="+356 9999 9999">
+          <p class="text-sm text-slate-500 mt-2">
+            Este teléfono se mostrará automáticamente en tus anuncios si tienes rol de propietario.
+          </p>
+        </div>
+
+        <div class="flex justify-end">
+          <button :disabled="saving" class="bg-slate-900 text-white font-bold px-6 py-3 rounded-lg disabled:opacity-60">
+            {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </div>
+      </form>
+    </div>
   </main>
 </template>
