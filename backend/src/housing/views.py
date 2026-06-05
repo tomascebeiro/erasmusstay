@@ -39,6 +39,7 @@ def obtener_rol(usuario):
         return "usuario"
 
 
+# Helper de permiso simple usado en varias vistas.
 def es_administrador(usuario):
     """
     Indica si el usuario tiene permisos de administración.
@@ -66,6 +67,10 @@ def convertir_booleano(valor):
         return valor.strip().lower() in ["true", "1", "yes", "si", "sí"]
 
     return bool(valor)
+
+
+# Convierte cualquier valor aceptable en un booleano real.
+# Esto evita que valores como "false" o "0" se interpreten como True.
 
 
 class AnuncioViewSet(viewsets.ModelViewSet):
@@ -197,6 +202,7 @@ class AnuncioViewSet(viewsets.ModelViewSet):
                 "Solo propietarios o administradores pueden publicar anuncios."
             )
 
+        # El anuncio se grava con el propietario actual.
         serializer.save(propietario=self.request.user)
 
     def perform_update(self, serializer):
@@ -223,7 +229,7 @@ class AnuncioViewSet(viewsets.ModelViewSet):
             return
 
         if rol == "propietario" and anuncio.propietario == self.request.user:
-            # Si el propietario edita su anuncio, vuelve a revisión.
+            # Si el propietario edita su anuncio, este necesita revisión.
             serializer.save(aprobado=False)
             return
 
@@ -246,6 +252,7 @@ class AnuncioViewSet(viewsets.ModelViewSet):
             anuncio.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
+        # Si no tiene permisos, devolvemos un error consistente.
         return Response(
             {"error": "Operación denegada. Sin privilegios."},
             status=status.HTTP_403_FORBIDDEN,

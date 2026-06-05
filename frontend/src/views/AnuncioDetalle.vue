@@ -3,6 +3,13 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 
+/**
+ * Vista de detalle de anuncio.
+ *
+ * Muestra toda la información de un alojamiento concreto.
+ * Permite ver imágenes, características, precio y detalles del propietario.
+ * Si el usuario es estudiante, también permite enviar valoraciones y solicitar contacto.
+ */
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const route = useRoute()
@@ -23,6 +30,8 @@ const ratingError = ref('')
 const ratingSuccess = ref('')
 
 const fetchAnuncio = async () => {
+  // Recupera el anuncio completo usando el id de la ruta.
+  // También inicializa la imagen seleccionada para la vista principal.
   loading.value = true
   error.value = ''
 
@@ -117,6 +126,7 @@ onMounted(() => {
 
 <template>
   <main class="bg-slate-50 min-h-screen py-10">
+    <!-- Contenido de detalle de un anuncio individual -->
     <div class="max-w-6xl mx-auto px-4">
       <button @click="router.back()" class="text-sm font-bold text-blue-700 hover:text-blue-900 mb-6">
         ← Volver

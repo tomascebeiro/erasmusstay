@@ -11,6 +11,7 @@ from .models import (
 
 
 class ImagenAnuncioSerializer(serializers.ModelSerializer):
+    # Campo calculado que devolverá la URL completa de la imagen.
     url = serializers.SerializerMethodField()
 
     class Meta:
@@ -90,6 +91,7 @@ class SolicitudContactoSerializer(serializers.ModelSerializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    # Campos adicionales para capturar rol y teléfono durante el registro.
     rol = serializers.ChoiceField(
         choices=PerfilUsuario.Rol.choices,
         default=PerfilUsuario.Rol.ESTUDIANTE,
@@ -106,6 +108,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
+        # Extraemos los campos del perfil y luego creamos el usuario Django.
         role = validated_data.pop("rol", PerfilUsuario.Rol.ESTUDIANTE)
         telefono = validated_data.pop("telefono", "")
         password = validated_data.pop("password")
@@ -183,6 +186,7 @@ class AnuncioSerializer(serializers.ModelSerializer):
         return ValoracionSerializer(valoraciones, many=True, context=self.context).data
 
     def _crear_imagenes(self, anuncio, imagenes):
+        # Genera objetos ImagenAnuncio a partir de los archivos subidos.
         for orden, imagen in enumerate(imagenes):
             ImagenAnuncio.objects.create(
                 anuncio=anuncio,

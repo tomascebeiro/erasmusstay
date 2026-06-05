@@ -1,6 +1,13 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 
+/**
+ * Vista principal de la aplicación.
+ *
+ * Es la página de bienvenida donde el usuario puede buscar alojamientos.
+ * Muestra un formulario de búsqueda rápida y una selección de anuncios destacados.
+ * El botón de Buscar redirige a la página de anuncios con los filtros aplicados.
+ */
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const loading = ref(false)
@@ -29,6 +36,7 @@ const getImage = (anuncio) => {
 }
 
 const fetchFeatured = async () => {
+  // Carga los anuncios destacados desde la API para mostrarlos en la página de inicio.
   loading.value = true
   error.value = ''
 
@@ -82,6 +90,7 @@ onMounted(() => {
 
 <template>
   <main class="bg-[#f8fafc] text-slate-900">
+    <!-- Sección principal: buscador rápido de alojamientos -->
     <section class="border-b border-slate-200 bg-white">
       <div class="mx-auto max-w-7xl px-4 py-20 text-center">
         <p class="text-sm font-bold uppercase tracking-wide text-blue-700">

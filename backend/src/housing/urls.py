@@ -21,6 +21,7 @@ urlpatterns = [
     path("login/", LoginView.as_view(), name="login"),
     path("me/", MiPerfilView.as_view(), name="mi-perfil"),
 
+    # Endpoints de administración de usuarios.
     path("admin/usuarios/", UsuarioAdminView.as_view(), name="admin-usuarios-list"),
     path("admin/usuarios/<int:pk>/", UsuarioAdminView.as_view(), name="admin-usuarios-detail"),
 ]

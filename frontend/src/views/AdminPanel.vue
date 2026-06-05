@@ -5,11 +5,11 @@ import { useAuth } from '../composables/useAuth'
 /**
  * Panel de administración principal.
  *
- * Permite al administrador:
- * - revisar, aprobar, desaprobar, editar y eliminar anuncios;
- * - activar o bloquear usuarios;
- * - moderar comentarios y valoraciones;
- * - revisar solicitudes de contacto.
+ * En esta vista el administrador puede ver y controlar todos los datos
+ * clave del sistema: anuncios, usuarios, comentarios y solicitudes.
+ *
+ * El backend expone varios endpoints para realizar estas acciones,
+ * y el componente usa el token para pedirlos de forma autenticada.
  */
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
@@ -61,6 +61,8 @@ const peticionAutenticada = async (url, options = {}) => {
  * Carga todos los datos necesarios para el panel.
  */
 const cargarDatos = async () => {
+  // Carga todas las listas necesarias del panel de administración.
+  // Se hace en paralelo para ahorrar tiempo.
   cargando.value = true
   error.value = ''
 
@@ -267,6 +269,8 @@ const eliminarComentario = async (comentario) => {
  * Cambia el estado de una solicitud de contacto.
  */
 const actualizarSolicitud = async (solicitud, estado) => {
+  // Cambia el estado de una solicitud de contacto.
+  // Esto permite marcarla respondida o cerrarla.
   error.value = ''
   mensajeExito.value = ''
 
@@ -295,6 +299,7 @@ onMounted(() => {
 
 <template>
   <main class="min-h-screen bg-slate-50 py-10">
+    <!-- Panel administrativo con pestañas para anuncios, usuarios, comentarios y solicitudes -->
     <div class="mx-auto max-w-7xl px-4">
       <!-- Cabecera -->
       <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">

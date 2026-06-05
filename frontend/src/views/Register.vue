@@ -5,16 +5,15 @@ import { useRouter } from 'vue-router'
 /**
  * Vista de registro.
  *
- * Responsabilidades:
- * - Crear una nueva cuenta de estudiante o propietario.
- * - Validar datos básicos antes de enviar.
- * - Enviar los datos al endpoint de registro del backend.
- * - Redirigir al login tras crear la cuenta.
+ * Este componente permite crear una nueva cuenta en la aplicación.
+ * El usuario puede registrarse como estudiante o propietario.
  *
- * Nota:
- * Los valores internos del rol se mantienen como los espera el backend:
- * - estudiante
- * - propietario
+ * El flujo es:
+ * 1. Capturar datos básicos (usuario, email, teléfono, contraseña, rol).
+ * 2. Validar localmente que las contraseñas coincidan y que los campos
+ *    obligatorios están completos.
+ * 3. Enviar los datos al backend al endpoint /api/register/.
+ * 4. Si el registro es correcto, mostrar mensaje de éxito y redirigir a login.
  */
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
@@ -39,21 +38,26 @@ const handleSubmit = async () => {
   error.value = ''
   success.value = ''
 
+  // Validación básica antes de enviar al servidor.
+  // Esto evita peticiones innecesarias y da retroalimentación rápida al usuario.
   if (!username.value || !email.value || !password.value || !password2.value) {
     error.value = 'Completa todos los campos obligatorios.'
     return
   }
 
+  // Comprobamos que ambas contraseñas sean iguales.
   if (password.value !== password2.value) {
     error.value = 'Las contraseñas introducidas no coinciden.'
     return
   }
 
+  // Requerimos una contraseña mínima por seguridad.
   if (password.value.length < 8) {
     error.value = 'La contraseña debe tener al menos 8 caracteres.'
     return
   }
 
+  // Indicamos al UI que la petición está en progreso.
   loading.value = true
 
   try {
@@ -73,12 +77,15 @@ const handleSubmit = async () => {
 
     let data = {}
 
+    // Intentamos parsear la respuesta JSON.
+    // Si el backend no devuelve JSON válido, usamos un objeto vacío.
     try {
       data = await response.json()
     } catch {
       data = {}
     }
 
+    // Si la respuesta no es 200-299, extraemos el mensaje de error más claro posible.
     if (!response.ok) {
       throw new Error(
         data.error ||
@@ -90,6 +97,7 @@ const handleSubmit = async () => {
       )
     }
 
+    // Registro exitoso: mostramos mensaje y redirigimos a login.
     success.value = 'Cuenta creada correctamente. Redirigiendo al inicio de sesión...'
 
     setTimeout(() => {
@@ -104,6 +112,7 @@ const handleSubmit = async () => {
 </script>
 
 <template>
+  <!-- Página de registro donde se crea una cuenta nueva -->
   <main class="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-slate-50 px-4 py-12">
     <div class="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm md:p-8">
       <div class="mb-6 text-center">
@@ -172,6 +181,10 @@ const handleSubmit = async () => {
           <label class="mb-2 block text-xs font-semibold uppercase text-slate-500">
             Tipo de cuenta
           </label>
+          <!--
+            Este selector define el rol que se enviará al backend.
+            El backend diferencia entre estudiantes y propietarios.
+          -->
 
           <select
             v-model="rol"

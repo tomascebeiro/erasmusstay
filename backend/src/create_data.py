@@ -1,6 +1,8 @@
 import os
 import django
 
+# Configura Django para que este script pueda usar los modelos y la base de datos
+# fuera del contexto normal del servidor web.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
 
@@ -15,6 +17,8 @@ from housing.models import (
 
 
 def get_or_create_profile(user, rol, telefono=""):
+    # Obtiene o crea un perfil para un usuario dado.
+    # Si el perfil ya existe, actualiza el rol y teléfono.
     perfil, created = PerfilUsuario.objects.get_or_create(
         usuario=user,
         defaults={
@@ -31,6 +35,8 @@ def get_or_create_profile(user, rol, telefono=""):
 
 
 def seed_users():
+    # Crea usuarios de ejemplo para pruebas y desarrollo.
+    # El administrador, dos propietarios y dos estudiantes.
     admin, created = User.objects.get_or_create(
         username="admin",
         defaults={
@@ -122,6 +128,8 @@ def seed_users():
 
 
 def create_anuncio(owner, data, image_urls):
+    # Crea o actualiza un anuncio según el título y propietario.
+    # Luego reemplaza todas las imágenes asociadas al anuncio.
     anuncio, created = Anuncio.objects.update_or_create(
         titulo=data["titulo"],
         propietario=owner,
@@ -155,6 +163,7 @@ def create_anuncio(owner, data, image_urls):
 
 
 def seed_anuncios(users):
+    # Genera anuncios de prueba para los propietarios creados.
     anuncios_data = [
         {
             "owner": users["owner1"],
@@ -257,6 +266,7 @@ def seed_anuncios(users):
 
 
 def seed_valoraciones(users, anuncios):
+    # Borra valoraciones existentes y crea comentarios de prueba.
     Valoracion.objects.all().delete()
 
     Valoracion.objects.create(
@@ -287,6 +297,7 @@ def seed_valoraciones(users, anuncios):
 
 
 def seed_solicitudes(users, anuncios):
+    # Borra solicitudes existentes y crea nuevas solicitudes de contacto.
     SolicitudContacto.objects.all().delete()
 
     SolicitudContacto.objects.create(
@@ -311,6 +322,7 @@ def seed_solicitudes(users, anuncios):
 
 
 def seed_data():
+    # Ejecuta todos los pasos del seed: usuarios, anuncios, valoraciones y solicitudes.
     users = seed_users()
     anuncios = seed_anuncios(users)
     seed_valoraciones(users, anuncios)

@@ -21,6 +21,8 @@ class PerfilUsuario(models.Model):
         on_delete=models.CASCADE,
         related_name="perfil",
     )
+    # Guardamos el teléfono en el perfil porque está asociado al usuario,
+    # no a cada anuncio específico.
     telefono = models.CharField(max_length=20, blank=True)
     rol = models.CharField(
         max_length=20,
@@ -71,6 +73,7 @@ class Anuncio(models.Model):
     telefono_contacto = models.CharField(max_length=20, blank=True)
     email_contacto = models.EmailField(blank=True)
 
+    # Publicación y moderación del anuncio.
     publicado = models.BooleanField(default=True)
     aprobado = models.BooleanField(default=False)
 
@@ -86,6 +89,8 @@ class Anuncio(models.Model):
 
     @property
     def telefono_propietario(self):
+        # Devuelve el teléfono del propietario desde su perfil.
+        # Si no existe perfil, devuelve cadena vacía.
         try:
             return self.propietario.perfil.telefono
         except PerfilUsuario.DoesNotExist:
@@ -93,6 +98,7 @@ class Anuncio(models.Model):
 
     @property
     def email_propietario(self):
+        # Email del usuario propietario guardado en la cuenta Django.
         return self.propietario.email
 
 

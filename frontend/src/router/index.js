@@ -13,6 +13,7 @@ import Profile from '../views/Profile.vue'
 import MisAnuncios from '../views/MisAnuncios.vue'
 
 const routes = [
+  // Definición de rutas públicas y privadas del front.
   {
     path: '/',
     name: 'inicio',
@@ -103,13 +104,16 @@ const router = createRouter({
   routes,
 })
 
+// Guard global que verifica acceso antes de cambiar de ruta.
 router.beforeEach(async (to) => {
   const { isAuthenticated, restoreSession, user } = useAuth()
 
+  // Si el usuario tiene token local pero no está cargado en memoria, restauramos la sesión.
   if (!isAuthenticated.value && localStorage.getItem('token')) {
     await restoreSession()
   }
 
+  // Redirige a login si la ruta requiere estar autenticado.
   if (to.meta.requiresAuth && !isAuthenticated.value) {
     return {
       name: 'login',
@@ -123,18 +127,21 @@ router.beforeEach(async (to) => {
   const username = (user.value?.username || '').toLowerCase()
 
   if (to.meta.requiresAdmin) {
+    // El panel de administración está reservado a administradores.
     if (role !== 'administrador' && username !== 'admin') {
       return { name: 'inicio' }
     }
   }
 
   if (to.meta.requiresOwner) {
+    // Rutas de propietario o creación de anuncios.
     if (!['propietario', 'administrador'].includes(role) && username !== 'admin') {
       return { name: 'inicio' }
     }
   }
 
   if (to.meta.guestOnly && isAuthenticated.value) {
+    // No permitir acceso a login/register si ya está autenticado.
     return { name: 'inicio' }
   }
 

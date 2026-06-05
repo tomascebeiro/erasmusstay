@@ -4,26 +4,31 @@ import { useRoute } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 
 /**
- * Listado público de anuncios.
+ * Componente de listado de anuncios.
  *
- * Permite:
- * - listar alojamientos aprobados;
- * - filtrar por ubicación, tipo, precio y servicios;
- * - mostrar imágenes reales;
- * - permitir editar o eliminar anuncios si el usuario es propietario del anuncio;
- * - permitir administrar anuncios si el usuario es administrador.
+ * En este componente se hacen las siguientes cosas:
+ * - se lee la ruta para inicializar filtros desde query params;
+ * - se consulta la API para obtener anuncios;
+ * - se almacena el estado de carga, error y mensajes de éxito;
+ * - se muestran botones de edición y borrado sólo si el usuario tiene permisos;
+ * - se gestiona el filtrado y la recarga de anuncios.
  */
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
+// Usamos la ruta actual para poder leer parámetros de búsqueda en la URL.
 const route = useRoute()
+// useAuth nos da datos del usuario y cabeceras de autenticación.
 const { user, getAuthHeaders, isAuthenticated } = useAuth()
 
+// Estado reactivo del componente.
 const anuncios = ref([])
 const cargando = ref(false)
 const error = ref('')
 const mensajeExito = ref('')
 
+// Filtros que se usan para construir la query hacia el backend.
+// Se inicializan con los valores de la URL si existen.
 const filtros = ref({
   busqueda: route.query.localizacion || '',
   tipo_vivienda: route.query.tipo_vivienda || '',
@@ -38,10 +43,13 @@ const filtros = ref({
  * Normaliza una respuesta paginada o una lista directa.
  */
 const normalizarLista = (data) => {
+  // En la API puede devolver una lista directa o un objeto paginado.
+  // Esta función siempre devuelve un array de anuncios.
   return Array.isArray(data) ? data : (data.results || [])
 }
 
 const rol = computed(() => {
+  // Normaliza el rol del usuario para comparaciones sencillas.
   return (user.value?.rol || '').toLowerCase()
 })
 
@@ -57,6 +65,8 @@ const esAdmin = computed(() => {
  * Comprueba si el usuario puede gestionar un anuncio concreto.
  */
 const puedeGestionar = (anuncio) => {
+  // El botón de editar/eliminar sólo aparece si el usuario está autenticado
+  // y es administrador o es el propietario del anuncio.
   if (!isAuthenticated.value) return false
   if (esAdmin.value) return true
 
@@ -65,6 +75,8 @@ const puedeGestionar = (anuncio) => {
 
 /**
  * Obtiene la primera imagen disponible del anuncio.
+ *
+ * Si el API devuelve el objeto con diferente clave, intenta varias opciones.
  */
 const obtenerImagen = (anuncio) => {
   const primera = anuncio.imagenes?.[0]
@@ -80,6 +92,8 @@ const obtenerImagen = (anuncio) => {
  * Construye la query de filtros para el backend.
  */
 const construirQuery = () => {
+  // Construye los parámetros de búsqueda a enviar al backend.
+  // Sólo añade los filtros que el usuario ha seleccionado.
   const params = new URLSearchParams()
 
   if (filtros.value.busqueda) {
@@ -117,6 +131,8 @@ const construirQuery = () => {
  * Carga los anuncios desde la API.
  */
 const cargarAnuncios = async () => {
+  // Carga los anuncios desde la API usando los filtros actuales.
+  // Actualiza el estado de carga y controla errores de red o respuesta.
   cargando.value = true
   error.value = ''
 
@@ -148,6 +164,7 @@ const cargarAnuncios = async () => {
  * Elimina un anuncio si el usuario tiene permisos.
  */
 const eliminarAnuncio = async (anuncio) => {
+  // Pide confirmación al usuario antes de eliminar. Solo los permisos correctos permiten ejecutar esta acción.
   if (!confirm(`¿Seguro que quieres eliminar el anuncio "${anuncio.titulo}"?`)) {
     return
   }
@@ -179,6 +196,7 @@ const eliminarAnuncio = async (anuncio) => {
  * Limpia todos los filtros.
  */
 const limpiarFiltros = () => {
+  // Restablece los filtros a sus valores iniciales y recarga la lista.
   filtros.value = {
     busqueda: '',
     tipo_vivienda: '',
@@ -192,6 +210,7 @@ const limpiarFiltros = () => {
   cargarAnuncios()
 }
 
+// Cuando el componente se monta en la página, cargamos los anuncios automáticamente.
 onMounted(() => {
   cargarAnuncios()
 })
@@ -241,7 +260,7 @@ onMounted(() => {
       </div>
 
       <div class="grid gap-8 lg:grid-cols-[260px_1fr]">
-        <!-- Filtros -->
+        <!-- Columna de filtros: controla los parámetros que se envían al backend -->
         <aside class="h-fit rounded border border-slate-200 bg-white p-5">
           <h2 class="mb-5 font-black text-slate-900">
             Filtros
@@ -336,7 +355,7 @@ onMounted(() => {
           </div>
         </aside>
 
-        <!-- Resultados -->
+        <!-- Sección de resultados: muestra los anuncios que devuelve la API -->
         <section>
           <div
             v-if="cargando"

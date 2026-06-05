@@ -13,12 +13,16 @@ import Navigation from './components/Navigation.vue'
 
 <template>
   <div class="min-h-screen bg-slate-50 text-slate-900">
+    <!-- Barra de navegación global visible en todas las páginas -->
     <Navigation />
 
+    <!-- Aquí se renderiza la vista actual según la ruta configurada -->
     <router-view />
 
+    <!-- Pie de página común para toda la aplicación -->
     <footer class="border-t border-slate-200 bg-white">
       <div class="mx-auto grid max-w-7xl gap-8 px-4 py-10 md:grid-cols-4">
+        <!-- Información de marca y descripción breve del proyecto -->
         <div class="md:col-span-2">
           <router-link to="/" class="text-xl font-black tracking-tight text-slate-900">
             Erasmus<span class="text-slate-600">Stay</span>
@@ -30,6 +34,7 @@ import Navigation from './components/Navigation.vue'
         </div>
 
         <div>
+          <!-- Enlaces rápidos a las secciones principales de la aplicación -->
           <h2 class="text-sm font-black uppercase tracking-wide text-slate-900">
             Plataforma
           </h2>
@@ -62,6 +67,7 @@ import Navigation from './components/Navigation.vue'
         </div>
 
         <div>
+          <!-- Enlaces relacionados con el usuario: login, registro y perfil -->
           <h2 class="text-sm font-black uppercase tracking-wide text-slate-900">
             Cuenta
           </h2>

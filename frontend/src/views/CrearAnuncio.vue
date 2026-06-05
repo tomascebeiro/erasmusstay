@@ -15,6 +15,10 @@ import { useAuth } from '../composables/useAuth'
  * - Cargar un anuncio existente si se entra en modo edición.
  * - Enviar datos como multipart/form-data para permitir subida de imágenes.
  * - Mostrar imágenes actuales y vista previa de nuevas imágenes.
+ *
+ * El backend puede recibir:
+ * - datos básicos del anuncio;
+ * - archivos de imagen que se cargan en la misma petición.
  */
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
@@ -37,6 +41,7 @@ const existingImages = ref([])
  */
 const isEditMode = computed(() => Boolean(route.params.id))
 
+// El formulario contiene todos los campos del anuncio. Se envía como FormData.
 const form = ref({
   titulo: '',
   descripcion: '',
@@ -74,6 +79,8 @@ const getImage = (image) => {
  * Recoge las imágenes seleccionadas y genera previsualizaciones locales.
  */
 const handleImages = (event) => {
+  // Cuando el usuario selecciona archivos, los guardamos en el formulario
+  // y creamos URLs temporales para mostrar una vista previa.
   const files = Array.from(event.target.files || [])
 
   form.value.imagenes = files
@@ -129,6 +136,8 @@ const loadAnuncio = async () => {
  * Construye el FormData que se enviará al backend.
  */
 const buildPayload = () => {
+  // Construye los datos para enviar al backend. Usa FormData porque puede
+  // incluir archivos de imagen junto con campos de texto.
   const payload = new FormData()
 
   payload.append('titulo', form.value.titulo.trim())
@@ -153,6 +162,7 @@ const buildPayload = () => {
  * Valida y envía el formulario.
  */
 const submit = async () => {
+  // Valida que el usuario tenga permisos para publicar o editar anuncios.
   if (!canPublish.value) {
     error.value = 'Solo propietarios o administradores pueden guardar anuncios.'
     return
@@ -185,6 +195,7 @@ const submit = async () => {
     const data = await response.json().catch(() => ({}))
 
     if (!response.ok) {
+      // Si el backend devuelve errores de validación, los mostramos.
       throw new Error(data.detail || data.error || JSON.stringify(data) || 'No se pudo guardar el anuncio.')
     }
 
@@ -207,6 +218,7 @@ onMounted(() => {
 
 <template>
   <main class="min-h-screen bg-slate-50 py-10">
+    <!-- Formulario para crear o editar un anuncio -->
     <div class="mx-auto max-w-4xl px-4">
       <div class="mb-8">
         <p class="text-sm font-bold uppercase tracking-wide text-blue-700">
