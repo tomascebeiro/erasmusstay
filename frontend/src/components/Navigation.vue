@@ -15,7 +15,6 @@ import { useAuth } from '../composables/useAuth'
  */
 
 const router = useRouter()
-// Controla si el menú móvil está abierto o cerrado.
 const menuOpen = ref(false)
 
 const { user, isAuthenticated, logout } = useAuth()
@@ -24,14 +23,11 @@ const { user, isAuthenticated, logout } = useAuth()
  * Cierra el menú móvil.
  */
 const closeMenu = () => {
-  // Cierra el menú móvil cuando el usuario navega a otra página.
   menuOpen.value = false
 }
 
 /**
  * Cierra la sesión del usuario y lo devuelve a la página de inicio.
- *
- * También cierra el menú móvil para evitar que quede abierto tras el logout.
  */
 const handleLogout = () => {
   logout()
@@ -73,7 +69,6 @@ const isAdmin = computed(() => {
  * - usuario admin de desarrollo.
  */
 const isOwnerOrAdmin = computed(() => {
-  // Permite mostrar enlaces de gestión a propietarios y administradores.
   if (!isAuthenticated.value) return false
 
   return ['propietario', 'administrador'].includes(normalizedRole.value) || normalizedUsername.value === 'admin'
@@ -81,8 +76,6 @@ const isOwnerOrAdmin = computed(() => {
 
 /**
  * Texto visible del rol en castellano.
- *
- * Se usa para mostrar el nombre del rol junto al usuario.
  */
 const displayRole = computed(() => {
   if (!user.value?.rol) return 'Usuario'
@@ -110,7 +103,6 @@ const displayRole = computed(() => {
       </router-link>
 
       <!-- Navegación escritorio -->
-      <!-- Este bloque muestra enlaces principales en pantalla grande. -->
       <div class="hidden items-center gap-6 md:flex">
         <router-link
           to="/"
@@ -156,7 +148,6 @@ const displayRole = computed(() => {
       </div>
 
       <!-- Acciones escritorio -->
-      <!-- Botones de perfil, publicar anuncio y logout para usuario logueado. -->
       <div class="hidden items-center gap-3 md:flex">
         <template v-if="isAuthenticated">
           <router-link
@@ -214,7 +205,6 @@ const displayRole = computed(() => {
       </div>
 
       <!-- Botón menú móvil -->
-      <!-- Visible sólo en pantallas pequeñas. Cambia entre abierto/cerrado. -->
       <button
         type="button"
         class="p-1 text-slate-900 md:hidden"
@@ -254,7 +244,6 @@ const displayRole = computed(() => {
     </nav>
 
     <!-- Navegación móvil -->
-    <!-- Menú deslizable que muestra los mismos enlaces en dispositivos móviles. -->
     <div
       v-if="menuOpen"
       class="space-y-3 border-t border-slate-200 bg-white p-4 shadow-sm md:hidden"

@@ -6,14 +6,11 @@ import { useAuth } from '../composables/useAuth'
 /**
  * Vista de inicio de sesión.
  *
- * Este componente muestra un formulario donde el usuario introduce su
- * nombre de usuario y contraseña. Cuando pulsa Entrar, se envía una petición
- * al backend para recibir un token de autenticación.
- *
- * Si el login es correcto:
- * - guarda el token usando el composable useAuth;
- * - guarda también los datos básicos del usuario;
- * - redirige al usuario a la página que intentaba visitar o al inicio.
+ * Responsabilidades:
+ * - Recoger usuario y contraseña.
+ * - Enviar credenciales al backend.
+ * - Guardar el token y los datos del usuario autenticado.
+ * - Redirigir al usuario a la ruta original o al inicio.
  */
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
@@ -102,7 +99,6 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <!-- Página de inicio de sesión con formulario y enlace a registro -->
   <main class="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-slate-50 px-4 py-12">
     <div class="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm md:p-8">
       <div class="mb-6 text-center">

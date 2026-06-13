@@ -2,16 +2,8 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
-/**
- * Vista de contacto y solicitudes.
- *
- * Esta vista tiene dos modos:
- * - El estudiante puede solicitar contacto por un anuncio.
- * - El propietario/admin puede ver las solicitudes y actualizar su estado.
- *
- * Gestiona el envío de nuevas solicitudes y la visualización de todas las solicitudes
- * relacionadas con el usuario autenticado.
- */const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const route = useRoute()
 const { user, getAuthHeaders } = useAuth()
@@ -64,8 +56,6 @@ const fetchSolicitudes = async () => {
 }
 
 const loadData = async () => {
-  // Carga simultánea del anuncio y de las solicitudes del usuario.
-  // El anuncio se carga solo si hay un id en la ruta.
   loading.value = true
   error.value = ''
 
@@ -149,7 +139,6 @@ onMounted(() => {
 
 <template>
   <main class="bg-slate-50 min-h-screen py-10">
-    <!-- Vista de contacto y seguimiento de solicitudes -->
     <div class="max-w-5xl mx-auto px-4">
       <div class="mb-8">
         <p class="text-sm font-bold text-blue-700 uppercase tracking-wide">

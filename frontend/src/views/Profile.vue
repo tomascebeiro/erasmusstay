@@ -2,15 +2,6 @@
 import { onMounted, ref } from 'vue'
 import { useAuth } from '../composables/useAuth'
 
-/**
- * Vista de perfil de usuario.
- *
- * Esta vista permite mostrar y actualizar los datos del usuario actual.
- * Usa el token almacenado para pedir al backend los datos del perfil, y
- * permite cambiar email y teléfono.
- *
- * No permite cambiar el nombre de usuario ni el rol desde aquí.
- */
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const { user, getAuthHeaders, updateLocalUser, restoreSession } = useAuth()
@@ -28,7 +19,6 @@ const form = ref({
 })
 
 const loadProfile = async () => {
-  // Carga el perfil actual desde el backend y guarda los valores en el formulario.
   loading.value = true
   error.value = ''
 
@@ -47,8 +37,6 @@ const loadProfile = async () => {
 }
 
 const saveProfile = async () => {
-  // Envía los cambios de email y teléfono al backend.
-  // Si la petición es correcta, actualiza el usuario local en el composable.
   saving.value = true
   error.value = ''
   success.value = ''
@@ -87,7 +75,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- Página de perfil para ver y actualizar los datos del usuario -->
   <main class="bg-slate-50 min-h-screen py-10">
     <div class="max-w-3xl mx-auto px-4">
       <div class="mb-8">

@@ -2,16 +2,6 @@
 import { computed, onMounted, ref } from 'vue'
 import { useAuth } from '../composables/useAuth'
 
-/**
- * Vista de anuncios del propietario.
- *
- * Muestra los anuncios que pertenecen al usuario actual y permite:
- * - ver el estado de aprobación;
- * - editar cada anuncio;
- * - eliminar anuncios.
- *
- * Usa el endpoint /api/anuncios/?mine=true para pedir solo los anuncios propios.
- */
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const { user, getAuthHeaders } = useAuth()
@@ -39,7 +29,6 @@ const getImage = (anuncio) => {
 }
 
 const fetchMisAnuncios = async () => {
-  // Carga los anuncios propios del usuario usando el token en headers.
   loading.value = true
   error.value = ''
   success.value = ''
@@ -100,7 +89,6 @@ onMounted(() => {
 
 <template>
   <main class="min-h-screen bg-slate-50 py-10">
-    <!-- Panel del propietario con lista de anuncios propios -->
     <div class="mx-auto max-w-7xl px-4">
       <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>

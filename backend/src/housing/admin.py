@@ -1,3 +1,23 @@
+"""
+Configuración del panel de administración de Django para la app housing.
+
+Este archivo registra los modelos principales de ErasmusStay en el panel interno
+de Django Admin, accesible desde /admin/.
+
+Aunque la aplicación cuenta con un frontend propio en Vue para usuarios,
+propietarios y administración, el admin de Django sigue siendo útil como panel
+técnico de mantenimiento. Desde aquí se pueden revisar y modificar directamente:
+
+- anuncios publicados por propietarios;
+- imágenes asociadas a cada anuncio;
+- perfiles de usuario y roles;
+- valoraciones y comentarios;
+- solicitudes de contacto.
+
+El objetivo de este archivo no es definir la lógica principal de negocio, sino
+configurar cómo se muestran y editan los modelos dentro del panel de Django.
+"""
+
 from django.contrib import admin
 
 from .models import (
@@ -9,19 +29,47 @@ from .models import (
 )
 
 
-# Define un inline para que las imágenes relacionadas con un anuncio se puedan
-# editar dentro de la misma página de admin del anuncio.
-# `extra = 2` añade dos formularios vacíos adicionales para subir nuevas imágenes.
 class ImagenAnuncioInline(admin.TabularInline):
+    """
+    Inline de imágenes dentro del formulario de un anuncio.
+
+    Permite añadir, editar o eliminar imágenes asociadas a un anuncio sin tener
+    que salir de la pantalla de edición del propio anuncio.
+
+    Se usa TabularInline para mostrar las imágenes en formato tabla, ocupando
+    menos espacio que un StackedInline.
+    """
+
+    # Modelo que se editará como elemento dependiente del anuncio.
     model = ImagenAnuncio
+
+    # Número de formularios vacíos que aparecen por defecto para añadir imágenes.
     extra = 2
+
+    # Campos visibles dentro del inline.
+    # - imagen: archivo subido al proyecto.
+    # - imagen_url: URL externa usada como compatibilidad o datos de prueba.
+    # - orden: posición de la imagen dentro de la galería.
     fields = ("imagen", "imagen_url", "orden")
 
 
 @admin.register(Anuncio)
 class AnuncioAdmin(admin.ModelAdmin):
-    # Campos visibles en la lista de anuncios dentro del admin.
-    # Esto facilita ver rápidamente el título, propietario y estado.
+    """
+    Configuración administrativa del modelo Anuncio.
+
+    Define cómo se visualizan y gestionan los anuncios en Django Admin:
+
+    - columnas visibles en el listado;
+    - filtros laterales;
+    - campos de búsqueda;
+    - edición rápida de estado;
+    - ordenación;
+    - imágenes relacionadas mediante inline;
+    - agrupación de campos en el formulario de edición.
+    """
+
+    # Columnas que aparecen en el listado principal de anuncios.
     list_display = (
         "titulo",
         "propietario",
@@ -33,8 +81,7 @@ class AnuncioAdmin(admin.ModelAdmin):
         "fecha_creacion",
     )
 
-    # Filtros rápidos en la barra lateral para segmentar anuncios.
-    # Sirve para revisar anuncios publicados/no publicados o con ciertas características.
+    # Filtros laterales para localizar anuncios rápidamente.
     list_filter = (
         "tipo_vivienda",
         "publicado",
@@ -44,7 +91,8 @@ class AnuncioAdmin(admin.ModelAdmin):
         "garaje",
     )
 
-    # Permite buscar anuncios por campos clave y por datos del propietario.
+    # Campos sobre los que se puede buscar desde el buscador del admin.
+    # También permite buscar por datos del propietario usando relaciones.
     search_fields = (
         "titulo",
         "descripcion",
@@ -53,17 +101,17 @@ class AnuncioAdmin(admin.ModelAdmin):
         "propietario__email",
     )
 
-    # Los campos list_editable se pueden cambiar directamente desde la lista.
-    # Útil para aprobar anuncios o marcar su publicación rápidamente.
+    # Campos editables directamente desde el listado, sin entrar al detalle.
+    # Es útil para aprobar/publicar anuncios rápidamente.
     list_editable = ("publicado", "aprobado")
 
-    # Ordena los anuncios por fecha de creación descendente.
+    # Orden por defecto: anuncios más recientes primero.
     ordering = ("-fecha_creacion",)
 
-    # Incluye las imágenes relacionadas directamente en el formulario del anuncio.
+    # Permite gestionar imágenes del anuncio desde la misma pantalla.
     inlines = [ImagenAnuncioInline]
 
-    # Organiza el formulario de edición en secciones para mayor claridad.
+    # Agrupa los campos del formulario de edición en bloques más claros.
     fieldsets = (
         ("Información principal", {
             "fields": ("propietario", "titulo", "descripcion", "tipo_vivienda")
@@ -80,54 +128,107 @@ class AnuncioAdmin(admin.ModelAdmin):
     )
 
     def save_model(self, request, obj, form, change):
-        # Si se crea un anuncio desde el admin y no tiene propietario asignado,
-        # se establece automáticamente el usuario que está guardando el registro.
+        """
+        Personaliza el guardado de anuncios desde Django Admin.
+
+        Funcionamiento:
+        1. Si se está creando un anuncio nuevo y no tiene propietario asignado,
+           se asigna como propietario el usuario que está usando el admin.
+        2. Se sincronizan los campos antiguos de contacto del anuncio con los
+           datos reales del propietario.
+        3. Se llama al guardado normal de Django Admin.
+
+        Esta sincronización mantiene compatibilidad con campos como
+        telefono_contacto y email_contacto, aunque el contacto principal se
+        obtenga desde el perfil del propietario.
+        """
+
+        # Si el anuncio es nuevo y no se seleccionó propietario,
+        # se asigna automáticamente el usuario actual del admin.
         if not obj.pk and not obj.propietario_id:
             obj.propietario = request.user
 
-        # Copia los datos de contacto del propietario al propio anuncio.
-        # Esto asegura que la información quede almacenada incluso si cambia el perfil.
+        # Sincroniza datos de contacto desde el perfil del propietario.
         obj.telefono_contacto = obj.telefono_propietario
         obj.email_contacto = obj.email_propietario
 
+        # Ejecuta el guardado estándar de Django.
         super().save_model(request, obj, form, change)
 
 
 @admin.register(PerfilUsuario)
 class PerfilUsuarioAdmin(admin.ModelAdmin):
-    # Configuración del admin para el perfil de usuario.
-    # Muestra nombre, rol y teléfono en la lista.
+    """
+    Configuración administrativa de perfiles de usuario.
+
+    Permite revisar y modificar el rol y el teléfono asociado a cada cuenta.
+    Es especialmente importante para propietarios, ya que su teléfono se utiliza
+    como contacto principal en los anuncios.
+    """
+
+    # Columnas visibles en el listado de perfiles.
     list_display = ("usuario", "rol", "telefono")
-    # Permite filtrar perfiles por rol. Ej: estudiante, propietario, admin.
+
+    # Filtro lateral por rol.
     list_filter = ("rol",)
-    # Busca perfiles por usuario, email o teléfono, útil para asistencia.
+
+    # Búsqueda por nombre de usuario, email o teléfono.
     search_fields = ("usuario__username", "usuario__email", "telefono")
 
 
 @admin.register(ImagenAnuncio)
 class ImagenAnuncioAdmin(admin.ModelAdmin):
-    # Configuración del admin para las imágenes de anuncios.
-    # Permite ver el anuncio asociado, el archivo y el orden de la imagen.
+    """
+    Configuración administrativa de imágenes de anuncios.
+
+    Permite revisar imágenes de forma independiente, sin entrar necesariamente
+    en el anuncio. Es útil para comprobar qué imágenes están asociadas a cada
+    alojamiento y en qué orden aparecen.
+    """
+
+    # Columnas visibles en el listado de imágenes.
     list_display = ("anuncio", "imagen", "imagen_url", "orden")
+
+    # Filtro por anuncio asociado.
     list_filter = ("anuncio",)
+
+    # Búsqueda por título del anuncio relacionado.
     search_fields = ("anuncio__titulo",)
 
 
 @admin.register(Valoracion)
 class ValoracionAdmin(admin.ModelAdmin):
-    # Configuración del admin de valoraciones.
-    # Muestra el anuncio, el usuario y si la valoración fue aprobada.
+    """
+    Configuración administrativa de valoraciones.
+
+    Permite moderar comentarios de estudiantes. El administrador puede cambiar
+    el campo aprobado para decidir si una valoración aparece públicamente o no.
+    """
+
+    # Columnas visibles en el listado de valoraciones.
     list_display = ("anuncio", "usuario", "puntuacion", "aprobado", "fecha_creacion")
+
+    # Filtros para localizar comentarios por puntuación o estado de moderación.
     list_filter = ("puntuacion", "aprobado")
+
+    # Búsqueda por texto del comentario, usuario o anuncio.
     search_fields = ("comentario", "usuario__username", "anuncio__titulo")
-    # Permite aprobar/desaprobar valoraciones sin abrir el registro.
+
+    # Permite aprobar o desaprobar comentarios desde el listado.
     list_editable = ("aprobado",)
 
 
 @admin.register(SolicitudContacto)
 class SolicitudContactoAdmin(admin.ModelAdmin):
-    # Configuración del admin de solicitudes de contacto.
-    # Permite ver qué estudiante ha solicitado información y en qué anuncio.
+    """
+    Configuración administrativa de solicitudes de contacto.
+
+    Permite revisar el historial de contacto entre estudiantes y propietarios.
+    Desde aquí se puede cambiar el estado de una solicitud, por ejemplo de
+    pendiente a respondida o cerrada.
+    """
+
+    # Columnas visibles en el listado de solicitudes.
     list_display = (
         "anuncio",
         "estudiante",
@@ -135,21 +236,23 @@ class SolicitudContactoAdmin(admin.ModelAdmin):
         "telefono_propietario_snapshot",
         "fecha_creacion",
     )
-    # Filtra por el estado de la solicitud para revisar pendientes o aceptadas.
+
+    # Filtro lateral por estado de la solicitud.
     list_filter = ("estado",)
-    # Busca solicitudes por anuncio, estudiante, mensaje o teléfono guardado.
+
+    # Búsqueda por anuncio, estudiante, mensaje o teléfono guardado.
     search_fields = (
         "anuncio__titulo",
         "estudiante__username",
         "mensaje",
         "telefono_propietario_snapshot",
     )
-    # Permite cambiar el estado desde la lista sin abrir el registro.
+
+    # Permite actualizar el estado directamente desde el listado.
     list_editable = ("estado",)
 
 
-# Personaliza los textos del panel de administración para ayudar a identificar
-# esta aplicación cuando se accede a /admin/.
+# Personalización visual básica del panel de administración de Django.
 admin.site.site_header = "ErasmusStay - Panel de Administración"
 admin.site.site_title = "ErasmusStay Admin"
 admin.site.index_title = "Gestión de Alojamientos"

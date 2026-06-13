@@ -5,47 +5,46 @@ from django.contrib.auth.models import User
 from .models import Anuncio, PerfilUsuario
 
 class ErasmusStayTests(APITestCase):
-    # Define usuarios de prueba con distintos roles para validar permisos.
 
     def setUp(self):
         # Limpiamos anuncios previos antes de cada test para evitar que se acumulen
         Anuncio.objects.all().delete()
-
+        
         self.admin = User.objects.create_superuser('admin', 'admin@test.com', 'pass')
         PerfilUsuario.objects.create(usuario=self.admin, rol='administrador')
-
+        
         self.propietario = User.objects.create_user('propietario', 'p@test.com', 'pass')
         PerfilUsuario.objects.create(usuario=self.propietario, rol='propietario')
-
+        
         self.estudiante = User.objects.create_user('estudiante', 'e@test.com', 'pass')
         PerfilUsuario.objects.create(usuario=self.estudiante, rol='estudiante')
 
         self.anuncios_url = reverse('anuncio-list')
 
     def test_crear_anuncio_como_propietario(self):
-        # Autenticamos como propietario para comprobar creación válida.
         self.client.force_authenticate(user=self.propietario)
         data = {
             'titulo': 'Test Piso',
             'descripcion': 'Descripción de prueba',
             'precio_mes': 500,
             'localizacion': 'Sliema',
-            'tipo_vivienda': 'habitacion',  # Aseguramos campo obligatorio.
+            'tipo_vivienda': 'habitacion' # Aseguramos campo obligatorio
         }
         response = self.client.post(self.anuncios_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_crear_anuncio_como_estudiante_denegado(self):
-        # Autenticamos como estudiante y verificamos que no pueda publicar.
         self.client.force_authenticate(user=self.estudiante)
+        # Enviamos datos completos para que no falle por validación (400) sino por permisos (403)
         data = {
-            'titulo': 'Piso ilegal',
-            'descripcion': 'x',
-            'precio_mes': 100,
+            'titulo': 'Piso ilegal', 
+            'descripcion': 'x', 
+            'precio_mes': 100, 
             'localizacion': 'x',
-            'tipo_vivienda': 'habitacion',
+            'tipo_vivienda': 'habitacion'
         }
         response = self.client.post(self.anuncios_url, data, format='json')
+        # Ahora debería devolver 403 Forbidden porque el estudiante no tiene rol
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_busqueda_filtros(self):
