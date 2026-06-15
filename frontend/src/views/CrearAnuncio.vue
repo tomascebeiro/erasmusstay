@@ -141,6 +141,7 @@ const buildPayload = () => {
   payload.append('wifi', form.value.wifi ? 'true' : 'false')
   payload.append('terraza', form.value.terraza ? 'true' : 'false')
   payload.append('garaje', form.value.garaje ? 'true' : 'false')
+  payload.append('publicado', 'true')
 
   form.value.imagenes.forEach((file) => {
     payload.append('uploaded_images', file)

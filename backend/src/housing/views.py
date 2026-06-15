@@ -292,7 +292,9 @@ class AnuncioViewSet(viewsets.ModelViewSet):
                 "Solo propietarios o administradores pueden publicar anuncios."
             )
 
-        serializer.save(propietario=self.request.user)
+        # Procesar publicado correctamente cuando viene desde FormData.
+        publicado = convertir_booleano(self.request.data.get("publicado", True))
+        serializer.save(propietario=self.request.user, publicado=publicado)
 
     def perform_update(self, serializer):
         """
