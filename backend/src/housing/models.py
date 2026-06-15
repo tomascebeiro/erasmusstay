@@ -166,7 +166,7 @@ class Anuncio(models.Model):
     # publicado indica si el propietario quiere que el anuncio esté activo.
     # aprobado indica si el administrador lo revisó y autorizó.
     publicado = models.BooleanField(default=True)
-    aprobado = models.BooleanField(default=False)
+    aprobado = models.BooleanField(default=True)
 
     # Fecha automática de creación del anuncio.
     fecha_creacion = models.DateTimeField(auto_now_add=True)

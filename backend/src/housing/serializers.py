@@ -325,7 +325,8 @@ class AnuncioSerializer(serializers.ModelSerializer):
         ]
 
         # Campos controlados por backend.
-        # El frontend no puede elegir propietario, aprobación ni datos derivados.
+        # El frontend no puede elegir propietario ni datos derivados.
+        # aprobado puede ser modificado por el admin mediante perform_update.
         read_only_fields = [
             "propietario",
             "propietario_nombre",
@@ -333,7 +334,6 @@ class AnuncioSerializer(serializers.ModelSerializer):
             "propietario_email",
             "telefono_contacto",
             "email_contacto",
-            "aprobado",
             "fecha_creacion",
         ]
 
